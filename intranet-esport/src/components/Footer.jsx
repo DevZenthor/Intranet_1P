@@ -1,71 +1,88 @@
 import React from "react";
-import "../styles/footer.css";
 import { Link } from "react-router-dom";
+import "../styles/footer.css";
 
 function Footer() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const canSeeMembers  = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeDocs     = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeContent  = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeServices = user && ["admin", "CEO", "Director"].includes(user.role);
+
   return (
-    <footer className="custom-footer">
-      <div className="container">
+    <footer className="footer">
+      <div className="footer-glow" />
 
-        <div className="row g-4">
+      <div className="footer-container">
 
-          {/* MARQUE */}
-          <div className="col-md-4">
-            <h3 className="footer-brand">
-              One Prodige
-            </h3>
+        {/* TOP */}
+        <div className="footer-top">
 
-            <p className="footer-text mt-3">
-              Intranet officiel de l’équipe One Prodige.
-              Plateforme interne premium pour gérer
-              l’organisation esport.
+          {/* BRAND */}
+          <div className="footer-brand-col">
+            <span className="footer-logo">One Prodige</span>
+            <p className="footer-desc">
+              Plateforme intranet officielle de l'équipe esport One Prodige.
+              Gestion centralisée du roster, des performances et du contenu.
             </p>
-          </div>
-
-          {/* NAVIGATION */}
-          <div className="col-md-4">
-            <h5 className="footer-title">
-              Navigation
-            </h5>
-
-            <Link to="/" className="footer-link">
-              Accueil
-            </Link>
-
-            <Link to="/equipe" className="footer-link">
-              Équipe
-            </Link>
-
-            {/*
-            <Link to="/planning" className="footer-link">
-              Planning
-            </Link>
-
-            <Link to="/documents" className="footer-link">
-              Documents
-            </Link>
-            */}
-          </div>
-
-          {/* COMPTE */}
-          <div className="col-md-4">
-            <h5 className="footer-title">
-              Compte
-            </h5>
-
-            <span className="footer-link">
-              Connexion
-            </span>
-
-            <div className="dev-box">
-              Dev by <span>Zenthor</span>
+            <div className="footer-dev">
+              Développé par <span>Zenthor</span>
             </div>
           </div>
 
+          {/* NAVIGATION */}
+          <div className="footer-nav-col">
+            <h5 className="footer-nav-title">Navigation</h5>
+            <div className="footer-links">
+              <Link to="/" className="footer-link">Accueil</Link>
+              {canSeeMembers && <Link to="/equipe"    className="footer-link">Équipe</Link>}
+              {canSeeMembers && <Link to="/annonces"  className="footer-link">Annonces</Link>}
+              {canSeeDocs    && <Link to="/documents" className="footer-link">Documents</Link>}
+            </div>
+          </div>
+
+          {/* FORTNITE */}
+          {canSeeDocs && (
+            <div className="footer-nav-col">
+              <h5 className="footer-nav-title">Fortnite</h5>
+              <div className="footer-links">
+                <Link to="/scouting"     className="footer-link">Scouting</Link>
+                <Link to="/performances" className="footer-link">Performances</Link>
+                <Link to="/joueurs"      className="footer-link">Joueurs</Link>
+              </div>
+            </div>
+          )}
+
+          {/* CONTENT */}
+          {canSeeContent && (
+            <div className="footer-nav-col">
+              <h5 className="footer-nav-title">Content</h5>
+              <div className="footer-links">
+                <Link to="/creators" className="footer-link">Creators</Link>
+                <Link to="/videos"   className="footer-link">Vidéos</Link>
+              </div>
+            </div>
+          )}
+
+          {/* SERVICES */}
+          {canSeeServices && (
+            <div className="footer-nav-col">
+              <h5 className="footer-nav-title">1P Services</h5>
+              <div className="footer-links">
+                <Link to="/compta" className="footer-link">Comptabilité</Link>
+              </div>
+            </div>
+          )}
+
         </div>
 
-        <div className="copyright text-center">
-          © 2026 One Prodige - Tous droits réservés
+        {/* DIVIDER */}
+        <div className="footer-divider" />
+
+        {/* BOTTOM */}
+        <div className="footer-bottom">
+          <span className="footer-copy">© 2026 One Prodige — Tous droits réservés</span>
+          <span className="footer-badge">Intranet Privé</span>
         </div>
 
       </div>

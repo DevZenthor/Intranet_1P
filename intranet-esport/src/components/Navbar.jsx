@@ -24,10 +24,12 @@ function Navbar() {
     window.location.href = "/";
   }
 
-  const canSeeMembers  = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeMembers  = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
   const canSeeDocs     = user && ["admin", "CEO", "Director"].includes(user.role);
   const canSeeContent  = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
   const canSeeServices = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeFortnite = user && ["admin", "CEO", "Director", "Coach"].includes(user.role);
+  const canSeeAnnonces = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
 
   function closeAll() {
     setShowFortnite(false);
@@ -56,11 +58,11 @@ function Navbar() {
 
           <nav className="navbar-menu">
             {navLink("/", "Accueil")}
-            {canSeeMembers && navLink("/equipe", "Équipe")}
-            {canSeeMembers && navLink("/annonces", "Annonces")}
+            {canSeeMembers  && navLink("/equipe",   "Équipe")}
+            {canSeeAnnonces && navLink("/annonces", "Annonces")}
 
-            {/* FORTNITE — admin, CEO, Director */}
-            {canSeeDocs && (
+            {/* FORTNITE — admin, CEO, Director, Coach */}
+            {canSeeFortnite && (
               <div className="fortnite-menu">
                 <button
                   className={`fortnite-toggle ${
@@ -86,7 +88,7 @@ function Navbar() {
               </div>
             )}
 
-            {/* CONTENT — admin, CEO, Director, Manager */}
+            {/* CONTENT — admin, CEO, Director, Manager uniquement */}
             {canSeeContent && (
               <div className="fortnite-menu">
                 <button
@@ -112,7 +114,7 @@ function Navbar() {
               </div>
             )}
 
-            {/* 1P SERVICES — admin, CEO, Director */}
+            {/* 1P SERVICES — admin, CEO, Director, Coach */}
             {canSeeServices && (
               <div className="fortnite-menu">
                 <button

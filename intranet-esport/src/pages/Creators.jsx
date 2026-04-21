@@ -34,6 +34,23 @@ function Creators() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  // ✅ FONCTION MANQUANTE RAJOUTÉE
+  function openEdit(c) {
+    setForm({
+      pseudo:               c.pseudo               || "",
+      role:                 c.role                 || "",
+      youtube_url:          c.youtube_url          || "",
+      tiktok_url:           c.tiktok_url           || "",
+      twitch_url:           c.twitch_url           || "",
+      yt_abonnes_debut:     c.yt_abonnes_debut     || "",
+      tiktok_abonnes_debut: c.tiktok_abonnes_debut || "",
+      yt_abonnes_now:       c.yt_abonnes_now       || "",
+      tiktok_abonnes_now:   c.tiktok_abonnes_now   || "",
+      nb_videos:            c.nb_videos            || "",
+    });
+    setEditCreator(c);
+  }
+
   async function addCreator() {
     if (!form.pseudo) { alert("Le pseudo est requis"); return; }
     await supabase.from("creators").insert([{
@@ -68,8 +85,6 @@ function Creators() {
     setDeleteCreator(null);
     loadCreators();
   }
-
-
 
   const roleColor = (role) => {
     if (role === "Content Creator") return "badge-creator";
@@ -128,7 +143,6 @@ function Creators() {
 
                   <div className="creator-stats">
 
-                    {/* YOUTUBE */}
                     {c.youtube_url && (
                       <div className="creator-stat-block">
                         <span className="creator-stat-platform">🎬 YouTube</span>
@@ -148,7 +162,6 @@ function Creators() {
                       </div>
                     )}
 
-                    {/* TIKTOK */}
                     {c.tiktok_url && (
                       <div className="creator-stat-block">
                         <span className="creator-stat-platform">🎵 TikTok</span>
@@ -170,7 +183,6 @@ function Creators() {
 
                   </div>
 
-                  {/* LINKS */}
                   <div className="creator-links">
                     {c.youtube_url && (
                       <a href={c.youtube_url} target="_blank" rel="noreferrer" className="creator-link yt">
@@ -207,7 +219,6 @@ function Creators() {
         )}
       </div>
 
-      {/* POPUP AJOUTER */}
       {showAdd && (
         <div className="creators-overlay" onClick={(e) => e.target === e.currentTarget && setShowAdd(false)}>
           <div className="creators-popup">
@@ -219,7 +230,6 @@ function Creators() {
         </div>
       )}
 
-      {/* POPUP MODIFIER */}
       {editCreator && (
         <div className="creators-overlay" onClick={(e) => e.target === e.currentTarget && setEditCreator(null)}>
           <div className="creators-popup">
@@ -231,7 +241,6 @@ function Creators() {
         </div>
       )}
 
-      {/* POPUP SUPPRIMER */}
       {deleteCreator && (
         <div className="creators-overlay" onClick={(e) => e.target === e.currentTarget && setDeleteCreator(null)}>
           <div className="creators-popup creators-popup--delete">
@@ -280,7 +289,5 @@ function CreatorForm({ form, onChange }) {
     </div>
   );
 }
-
-
 
 export default Creators;
