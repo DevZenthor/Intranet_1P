@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/footer.css";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -10,29 +11,55 @@ function Footer() {
 
           {/* MARQUE */}
           <div className="col-md-4">
-            <h3 className="footer-brand">One Prodige</h3>
+            <h3 className="footer-brand">
+              One Prodige
+            </h3>
 
             <p className="footer-text mt-3">
-              Intranet officiel de l'équipe One Prodige.
+              Intranet officiel de l’équipe One Prodige.
+              Plateforme interne premium pour gérer
+              l’organisation esport.
             </p>
           </div>
 
           {/* NAVIGATION */}
           <div className="col-md-4">
-            <h5 className="footer-title">Navigation</h5>
+            <h5 className="footer-title">
+              Navigation
+            </h5>
 
-            <a href="#" className="footer-link">Accueil</a>
-            <a href="#" className="footer-link">Équipe</a>
-            <a href="#" className="footer-link">Planning</a>
-            <a href="#" className="footer-link">Documents</a>
+            <Link to="/" className="footer-link">
+              Accueil
+            </Link>
+
+            <Link to="/equipe" className="footer-link">
+              Équipe
+            </Link>
+
+            {/*
+            <Link to="/planning" className="footer-link">
+              Planning
+            </Link>
+
+            <Link to="/documents" className="footer-link">
+              Documents
+            </Link>
+            */}
           </div>
 
           {/* COMPTE */}
           <div className="col-md-4">
-            <h5 className="footer-title">Compte</h5>
+            <h5 className="footer-title">
+              Compte
+            </h5>
 
-            <a href="#" className="footer-link">Connexion</a>
-            <a href="#" className="footer-link">Support</a>
+            <span className="footer-link">
+              Connexion
+            </span>
+
+            <span className="footer-link">
+              Support
+            </span>
 
             <div className="dev-box">
               Dev by <span>Zenthor</span>
@@ -42,7 +69,7 @@ function Footer() {
         </div>
 
         <div className="copyright text-center">
-          © 2026 One Prodige
+          © 2026 One Prodige - Tous droits réservés
         </div>
 
       </div>

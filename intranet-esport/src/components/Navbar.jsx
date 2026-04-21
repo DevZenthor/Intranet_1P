@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import "../styles/navbar.css";
 
+import { Link } from "react-router-dom";
+
 import LoginModal from "./LoginModal";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+
   const { user, logout } = useAuth();
 
   return (
@@ -14,36 +17,38 @@ function Navbar() {
         <div className="container">
 
           {/* LOGO */}
-          <a href="#" className="navbar-brand">
+          <Link to="/" className="navbar-brand">
             One Prodige
-          </a>
+          </Link>
 
           {/* MENU */}
           <ul className="navbar-nav mx-auto d-flex flex-row gap-4">
 
-            <li>
-              <a className="nav-link" href="#">
+            <li className="nav-item">
+              <Link to="/" className="nav-link">
                 Accueil
-              </a>
+              </Link>
             </li>
 
-            <li>
-              <a className="nav-link" href="#">
+            <li className="nav-item">
+              <Link to="/equipe" className="nav-link">
                 Équipe
-              </a>
+              </Link>
             </li>
 
-            <li>
-              <a className="nav-link" href="#">
+            {/*
+            <li className="nav-item">
+              <Link to="/planning" className="nav-link">
                 Planning
-              </a>
+              </Link>
             </li>
 
-            <li>
-              <a className="nav-link" href="#">
+            <li className="nav-item">
+              <Link to="/documents" className="nav-link">
                 Documents
-              </a>
+              </Link>
             </li>
+            */}
 
           </ul>
 
