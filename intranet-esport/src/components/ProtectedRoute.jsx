@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 const ROLE_ROUTES = {
   "/equipe":       ["admin", "CEO", "Director", "Manager", "Coach"],
   "/annonces":     ["admin", "CEO", "Director", "Manager", "Coach"],
-  "/scouting":     ["admin", "CEO", "Director", "Coach"],
+  "/scouting":     ["admin", "CEO", "Director"],
   "/performances": ["admin", "CEO", "Director", "Coach"],
   "/joueurs":      ["admin", "CEO", "Director", "Coach"],
   "/documents":    ["admin", "CEO", "Director"],

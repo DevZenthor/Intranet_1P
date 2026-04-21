@@ -29,6 +29,7 @@ function Navbar() {
   const canSeeContent  = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
   const canSeeServices = user && ["admin", "CEO", "Director"].includes(user.role);
   const canSeeFortnite = user && ["admin", "CEO", "Director", "Coach"].includes(user.role);
+  const canSeeScouting = user && ["admin", "CEO", "Director"].includes(user.role);
   const canSeeAnnonces = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
 
   function closeAll() {
@@ -80,7 +81,9 @@ function Navbar() {
 
                 {showFortnite && (
                   <div className="fortnite-dropdown">
-                    <Link to="/scouting"     onClick={closeAll}>Scouting</Link>
+                    {canSeeScouting && (
+                      <Link to="/scouting" onClick={closeAll}>Scouting</Link>
+                    )}
                     <Link to="/performances" onClick={closeAll}>Performances</Link>
                     <Link to="/joueurs"      onClick={closeAll}>Joueurs</Link>
                   </div>
@@ -88,7 +91,7 @@ function Navbar() {
               </div>
             )}
 
-            {/* CONTENT — admin, CEO, Director, Manager uniquement */}
+            {/* CONTENT — admin, CEO, Director, Manager */}
             {canSeeContent && (
               <div className="fortnite-menu">
                 <button
@@ -114,7 +117,7 @@ function Navbar() {
               </div>
             )}
 
-            {/* 1P SERVICES — admin, CEO, Director, Coach */}
+            {/* 1P SERVICES — admin, CEO, Director */}
             {canSeeServices && (
               <div className="fortnite-menu">
                 <button
