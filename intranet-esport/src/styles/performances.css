@@ -410,3 +410,18 @@
   .perf-page  { padding: 120px 16px 60px; }
   .perf-popup { padding: 28px 20px; }
 }
+
+.perf-chart-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(253,182,40,0.15);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 40px;
+}
+
+.perf-chart-title {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 900;
+  margin: 0 0 24px;
+}

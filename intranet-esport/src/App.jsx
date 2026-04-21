@@ -17,6 +17,7 @@ import Performances from "./pages/Performances";
 import Creators from "./pages/Creators";
 import Videos from "./pages/Videos";
 import Compta from "./pages/Compta";
+import Annonces from "./pages/Annonces";
 
 function App() {
   return (
@@ -96,13 +97,22 @@ function App() {
           }
         />
 
-        <Route 
-        path="/compta" 
-        element={
-        <ProtectedRoute>
-          <Compta />
-          </ProtectedRoute>
-        } 
+        <Route
+          path="/compta"
+          element={
+            <ProtectedRoute>
+              <Compta />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/annonces"
+          element={
+            <ProtectedRoute>
+              <Annonces />
+            </ProtectedRoute>
+          }
         />
 
       </Routes>

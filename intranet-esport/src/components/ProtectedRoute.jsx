@@ -7,18 +7,20 @@ const ROLE_ROUTES = {
   "/performances": ["admin", "CEO", "Director"],
   "/joueurs":      ["admin", "CEO", "Director"],
   "/documents":    ["admin", "CEO", "Director"],
+  "/compta":       ["admin", "CEO", "Director"],
+  "/creators":     ["admin", "CEO", "Director", "Manager"],
+  "/videos":       ["admin", "CEO", "Director", "Manager"],
   "/equipe":       ["admin", "CEO", "Director", "Manager"],
+  "/annonces":     ["admin", "CEO", "Director", "Manager"],
 };
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
 
-  // Pas connecté → home
   if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // Rôle insuffisant → home
   const path = window.location.pathname;
   const allowedRoles = ROLE_ROUTES[path];
 

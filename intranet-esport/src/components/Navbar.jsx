@@ -57,6 +57,7 @@ function Navbar() {
           <nav className="navbar-menu">
             {navLink("/", "Accueil")}
             {canSeeMembers && navLink("/equipe", "Équipe")}
+            {canSeeMembers && navLink("/annonces", "Annonces")}
 
             {/* FORTNITE — admin, CEO, Director */}
             {canSeeDocs && (
@@ -66,7 +67,11 @@ function Navbar() {
                     ["/scouting", "/performances", "/joueurs"].includes(location.pathname)
                       ? "active-toggle" : ""
                   }`}
-                  onClick={() => { setShowFortnite(!showFortnite); setShowContent(false); setShowServices(false); }}
+                  onClick={() => {
+                    setShowFortnite(!showFortnite);
+                    setShowContent(false);
+                    setShowServices(false);
+                  }}
                 >
                   Fortnite ▾
                 </button>
@@ -89,7 +94,11 @@ function Navbar() {
                     ["/creators", "/videos"].includes(location.pathname)
                       ? "active-toggle" : ""
                   }`}
-                  onClick={() => { setShowContent(!showContent); setShowFortnite(false); setShowServices(false); }}
+                  onClick={() => {
+                    setShowContent(!showContent);
+                    setShowFortnite(false);
+                    setShowServices(false);
+                  }}
                 >
                   Content ▾
                 </button>
@@ -111,7 +120,11 @@ function Navbar() {
                     ["/compta"].includes(location.pathname)
                       ? "active-toggle" : ""
                   }`}
-                  onClick={() => { setShowServices(!showServices); setShowFortnite(false); setShowContent(false); }}
+                  onClick={() => {
+                    setShowServices(!showServices);
+                    setShowFortnite(false);
+                    setShowContent(false);
+                  }}
                 >
                   1P Services ▾
                 </button>

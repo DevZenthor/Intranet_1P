@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../services/supabase";
 import "../styles/performances.css";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 function Performances() {
   const [perfs, setPerfs] = useState([]);
@@ -96,9 +97,9 @@ function Performances() {
 
   // STATS calculées sur les données filtrées
   const stats = {
-    avgKills:  filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.kills || 0), 0) / filtered.length) : 0,
+    avgKills: filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.kills || 0), 0) / filtered.length) : 0,
     avgPoints: filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.points || 0), 0) / filtered.length) : 0,
-    totalPR:   filtered.reduce((s, p) => s + (p.pr_gagne || 0), 0),
+    totalPR: filtered.reduce((s, p) => s + (p.pr_gagne || 0), 0),
     bestPoints: filtered.length ? Math.max(...filtered.map(p => p.points || 0)) : 0,
     worstPoints: filtered.length ? Math.min(...filtered.map(p => p.points || 0)) : 0,
   };
@@ -170,6 +171,34 @@ function Performances() {
             <span className="perf-stat-value">{stats.worstPoints} pts</span>
           </div>
         </div>
+
+        {/* GRAPHIQUE PR GAGNÉ PAR JOUEUR */}
+        {(() => {
+          const prParJoueur = {};
+          filtered.forEach(p => {
+            if (!prParJoueur[p.joueur]) prParJoueur[p.joueur] = 0;
+            prParJoueur[p.joueur] += (p.pr_gagne || 0);
+          });
+          const chartData = Object.entries(prParJoueur).map(([joueur, pr]) => ({ joueur, pr }));
+
+          return chartData.length > 0 ? (
+            <div className="perf-chart-box">
+              <h3 className="perf-chart-title">PR Gagné par Joueur</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                  <XAxis dataKey="joueur" stroke="#aaa" tick={{ fill: "#ccc", fontWeight: 700 }} />
+                  <YAxis stroke="#aaa" tick={{ fill: "#ccc" }} />
+                  <Tooltip
+                    contentStyle={{ background: "#111", border: "1px solid rgba(253,182,40,0.3)", borderRadius: 12 }}
+                    labelStyle={{ color: "#FDB628", fontWeight: 900 }}
+                    itemStyle={{ color: "white" }}
+                  />
+                  <Bar dataKey="pr" name="PR Gagné" fill="#FDB628" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : null;
+        })()}
 
         {/* TABLE */}
         {loading ? (
@@ -287,13 +316,13 @@ function PerfForm({ form, onChange, players }) {
       </select>
 
       {[
-        { name: "nom_cup",    placeholder: "Nom de la Cup",  type: "text"   },
-        { name: "classement", placeholder: "Classement",     type: "number" },
-        { name: "pr_gagne",   placeholder: "PR Gagné",       type: "number" },
-        { name: "kills",      placeholder: "Kills",          type: "number" },
-        { name: "top1",       placeholder: "Top 1 (1 ou 0)", type: "number" },
-        { name: "points",     placeholder: "Points",         type: "number" },
-        { name: "cash_prize", placeholder: "Cash Prize",     type: "text"   },
+        { name: "nom_cup", placeholder: "Nom de la Cup", type: "text" },
+        { name: "classement", placeholder: "Classement", type: "number" },
+        { name: "pr_gagne", placeholder: "PR Gagné", type: "number" },
+        { name: "kills", placeholder: "Kills", type: "number" },
+        { name: "top1", placeholder: "Top 1 (1 ou 0)", type: "number" },
+        { name: "points", placeholder: "Points", type: "number" },
+        { name: "cash_prize", placeholder: "Cash Prize", type: "text" },
       ].map(f => (
         <input
           key={f.name}
