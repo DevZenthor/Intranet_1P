@@ -39,13 +39,7 @@ function Home() {
           centralisés dans un espace moderne.
         </p>
 
-        <button
-          className="main-btn"
-          data-aos="fade-up"
-          data-aos-delay="250"
-        >
-          Accéder à l'intranet
-        </button>
+       
 
         <div className="row mt-5 g-4">
 
@@ -61,7 +55,7 @@ function Home() {
             <div className="feature-card tilt-card">
               <FaCalendarAlt className="feature-icon planning-icon" />
               <h3>Planning</h3>
-              <p>Scrims, matchs et événements.</p>
+              <p>planning webtv , planning youtube et  événements.</p>
             </div>
           </div>
 

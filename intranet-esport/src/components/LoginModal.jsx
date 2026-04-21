@@ -1,41 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "../services/supabase";
 import "../styles/loginmodal.css";
 
-function LoginModal() {
-  const [open, setOpen] = useState(false);
+function LoginModal({ closeModal, onLoginSuccess }) {
   const [pseudo, setPseudo] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const openModal = () => setOpen(true);
-
-    window.addEventListener(
-      "openLoginModal",
-      openModal
-    );
-
-    return () =>
-      window.removeEventListener(
-        "openLoginModal",
-        openModal
-      );
+    document.body.style.overflow = "hidden";
+    setTimeout(() => setVisible(true), 10);
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
-  const login = async () => {
+  function handleClose() {
+    setVisible(false);
+    setTimeout(closeModal, 220);
+  }
+
+  async function login() {
+    if (!pseudo.trim() || !code.trim()) {
+      setError("Remplis tous les champs");
+      return;
+    }
+
     setLoading(true);
     setError("");
-
-    const cleanPseudo = pseudo.trim();
-    const cleanCode = code.trim();
 
     const { data, error } = await supabase
       .from("users")
       .select("*")
-      .eq("pseudo", cleanPseudo)
-      .eq("code", cleanCode);
+      .eq("pseudo", pseudo.trim())
+      .eq("code", code.trim());
 
     if (error) {
       setError("Erreur serveur");
@@ -49,61 +49,70 @@ function LoginModal() {
       return;
     }
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify(data[0])
-    );
+    localStorage.setItem("user", JSON.stringify(data[0]));
 
-    window.location.reload();
-  };
-
-  if (!open) return null;
+    if (onLoginSuccess) onLoginSuccess();
+  }
 
   return (
-    <div className="login-overlay">
-      <div className="login-box">
+    <div
+      className={`login-overlay ${visible ? "login-overlay--in" : ""}`}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleClose();
+      }}
+    >
+      <div className={`login-box ${visible ? "login-box--in" : ""}`}>
 
-        <h2>Connexion</h2>
+        <button
+          className="modal-close"
+          onClick={handleClose}
+          aria-label="Fermer"
+        >
+          <span></span>
+          <span></span>
+        </button>
 
-        <input
-          type="text"
-          placeholder="Pseudo"
-          value={pseudo}
-          onChange={(e) =>
-            setPseudo(e.target.value)
-          }
-        />
+        <div className="login-header">
+          <div className="login-logo-dot" />
+          <h2>Connexion</h2>
+          <p>Accès réservé aux membres</p>
+        </div>
 
-        <input
-          type="password"
-          placeholder="Code"
-          value={code}
-          onChange={(e) =>
-            setCode(e.target.value)
-          }
-        />
+        <div className="login-fields">
+          <div className="login-field">
+            <label>Pseudo</label>
+            <input
+              type="text"
+              placeholder="Ton pseudo"
+              value={pseudo}
+              onChange={(e) => setPseudo(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && login()}
+              autoFocus
+            />
+          </div>
+
+          <div className="login-field">
+            <label>Code</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && login()}
+            />
+          </div>
+        </div>
 
         {error && (
-          <p className="login-error">
-            {error}
-          </p>
+          <p className="login-error">⚠ {error}</p>
         )}
 
         <button
-          className="login-btn"
+          className="login-submit-btn"
           onClick={login}
           disabled={loading}
         >
-          {loading
-            ? "Connexion..."
-            : "Se connecter"}
-        </button>
-
-        <button
-          className="close-btn"
-          onClick={() => setOpen(false)}
-        >
-          Fermer
+          {loading ? <span className="login-spinner" /> : "Se connecter"}
         </button>
 
       </div>

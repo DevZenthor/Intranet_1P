@@ -1,74 +1,108 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import LoginModal from "./LoginModal";
 import "../styles/navbar.css";
 
 function Navbar() {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [showFortnite, setShowFortnite] = useState(false);
+  const location = useLocation();
 
-  useEffect(() => {
+  useEffect(() => { loadUser(); }, []);
+
+  function loadUser() {
     const saved = localStorage.getItem("user");
-    if (saved) setUser(JSON.parse(saved));
-  }, []);
+    setUser(saved ? JSON.parse(saved) : null);
+  }
 
-  const logout = () => {
+  function logout() {
     localStorage.removeItem("user");
-    navigate("/");
-    window.location.reload();
-  };
+    setUser(null);
+    window.location.href = "/";
+  }
 
-  const openLogin = () => {
-    window.dispatchEvent(new Event("openLoginModal"));
-  };
+  const canSeeMembers = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeDocs    = user && ["admin", "CEO", "Director"].includes(user.role);
 
-  const canAccessScouting =
-    user &&
-    ["admin", "CEO", "Director"].includes(user.role);
+  const navLink = (to, label) => (
+    <Link
+      to={to}
+      className={location.pathname === to ? "active" : ""}
+      onClick={() => setShowFortnite(false)}
+    >
+      {label}
+    </Link>
+  );
 
   return (
-    <nav className="custom-navbar">
-      <div className="container nav-content">
+    <>
+      <header className="navbar">
+        <div className="navbar-container">
 
-        <Link to="/" className="brand">
-          One Prodige
-        </Link>
+          <Link to="/" className="navbar-logo">
+            One Prodige
+          </Link>
 
-        <div className="nav-links">
-          <Link to="/">Accueil</Link>
+          <nav className="navbar-menu">
+            {navLink("/", "Accueil")}
+            {canSeeMembers && navLink("/equipe", "Équipe")}
 
-          {user && <Link to="/equipe">Équipe</Link>}
+            {/* FORTNITE — uniquement admin, CEO, Director */}
+            {canSeeDocs && (
+              <div className="fortnite-menu">
+                <button
+                  className={`fortnite-toggle ${
+                    ["/scouting", "/performances", "/joueurs"].includes(location.pathname)
+                      ? "active-toggle" : ""
+                  }`}
+                  onClick={() => setShowFortnite(!showFortnite)}
+                >
+                  Fortnite ▾
+                </button>
 
-          {canAccessScouting && (
-            <Link to="/scouting">Scouting</Link>
-          )}
-        </div>
+                {showFortnite && (
+                  <div className="fortnite-dropdown">
+                    <Link to="/scouting"     onClick={() => setShowFortnite(false)}>Scouting</Link>
+                    <Link to="/performances" onClick={() => setShowFortnite(false)}>Performances</Link>
+                    <Link to="/joueurs"      onClick={() => setShowFortnite(false)}>Joueurs</Link>
+                  </div>
+                )}
+              </div>
+            )}
 
-        <div className="nav-right">
-          {user ? (
-            <>
-              <span className="hello-user">
-                Bonjour {user.pseudo}
-              </span>
+            {canSeeDocs && navLink("/documents", "Documents")}
+          </nav>
 
-              <button
-                className="nav-btn"
-                onClick={logout}
-              >
-                Logout
+          <div className="navbar-right">
+            {user ? (
+              <>
+                <span className="navbar-user">Bonjour {user.pseudo}</span>
+                <button type="button" className="logout-btn" onClick={logout}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button type="button" className="login-btn" onClick={() => setShowModal(true)}>
+                Connexion
               </button>
-            </>
-          ) : (
-            <button
-              className="nav-btn"
-              onClick={openLogin}
-            >
-              Connexion
-            </button>
-          )}
-        </div>
+            )}
+          </div>
 
-      </div>
-    </nav>
+        </div>
+      </header>
+
+      {showModal && (
+        <LoginModal
+          closeModal={() => setShowModal(false)}
+          onLoginSuccess={() => {
+            loadUser();
+            setShowModal(false);
+            window.location.reload();
+          }}
+        />
+      )}
+    </>
   );
 }
 
