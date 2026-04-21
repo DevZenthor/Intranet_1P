@@ -1,91 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/navbar.css";
 
-import { Link } from "react-router-dom";
-
-import LoginModal from "./LoginModal";
-import { useAuth } from "../context/AuthContext";
-
 function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  const { user, logout } = useAuth();
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) setUser(JSON.parse(saved));
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+    window.location.reload();
+  };
+
+  const openLogin = () => {
+    window.dispatchEvent(new Event("openLoginModal"));
+  };
+
+  const canAccessScouting =
+    user &&
+    ["admin", "CEO", "Director"].includes(user.role);
 
   return (
-    <>
-      <nav className="custom-navbar navbar navbar-expand-lg">
-        <div className="container">
+    <nav className="custom-navbar">
+      <div className="container nav-content">
 
-          {/* LOGO */}
-          <Link to="/" className="navbar-brand">
-            One Prodige
-          </Link>
+        <Link to="/" className="brand">
+          One Prodige
+        </Link>
 
-          {/* MENU */}
-          <ul className="navbar-nav mx-auto d-flex flex-row gap-4">
+        <div className="nav-links">
+          <Link to="/">Accueil</Link>
 
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                Accueil
-              </Link>
-            </li>
+          {user && <Link to="/equipe">Équipe</Link>}
 
-            <li className="nav-item">
-              <Link to="/equipe" className="nav-link">
-                Équipe
-              </Link>
-            </li>
+          {canAccessScouting && (
+            <Link to="/scouting">Scouting</Link>
+          )}
+        </div>
 
-            {/*
-            <li className="nav-item">
-              <Link to="/planning" className="nav-link">
-                Planning
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link to="/documents" className="nav-link">
-                Documents
-              </Link>
-            </li>
-            */}
-
-          </ul>
-
-          {/* RIGHT */}
-          <div className="d-flex align-items-center gap-3">
-
-            {user && (
-              <span className="user-name">
+        <div className="nav-right">
+          {user ? (
+            <>
+              <span className="hello-user">
                 Bonjour {user.pseudo}
               </span>
-            )}
 
-            {user ? (
               <button
-                className="login-btn"
+                className="nav-btn"
                 onClick={logout}
               >
                 Logout
               </button>
-            ) : (
-              <button
-                className="login-btn"
-                onClick={() => setOpen(true)}
-              >
-                Connexion
-              </button>
-            )}
-
-          </div>
-
+            </>
+          ) : (
+            <button
+              className="nav-btn"
+              onClick={openLogin}
+            >
+              Connexion
+            </button>
+          )}
         </div>
-      </nav>
 
-      {open && (
-        <LoginModal close={() => setOpen(false)} />
-      )}
-    </>
+      </div>
+    </nav>
   );
 }
 

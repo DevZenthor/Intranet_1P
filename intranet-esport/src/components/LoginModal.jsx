@@ -1,32 +1,63 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../services/supabase";
-import { useAuth } from "../context/AuthContext";
+import "../styles/loginmodal.css";
 
-function LoginModal({ close }) {
+function LoginModal() {
+  const [open, setOpen] = useState(false);
   const [pseudo, setPseudo] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  useEffect(() => {
+    const openModal = () => setOpen(true);
 
-  const handleLogin = async () => {
-  setError("");
+    window.addEventListener(
+      "openLoginModal",
+      openModal
+    );
 
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .ilike("pseudo", pseudo)
-    .eq("code", code)
-    .single();
+    return () =>
+      window.removeEventListener(
+        "openLoginModal",
+        openModal
+      );
+  }, []);
 
-  if (data) {
-    login(data);
-    close();
-  } else {
-    setError("Identifiants invalides");
-    console.log(error);
-  }
-};
+  const login = async () => {
+    setLoading(true);
+    setError("");
+
+    const cleanPseudo = pseudo.trim();
+    const cleanCode = code.trim();
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("pseudo", cleanPseudo)
+      .eq("code", cleanCode);
+
+    if (error) {
+      setError("Erreur serveur");
+      setLoading(false);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      setError("Identifiants invalides");
+      setLoading(false);
+      return;
+    }
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(data[0])
+    );
+
+    window.location.reload();
+  };
+
+  if (!open) return null;
 
   return (
     <div className="login-overlay">
@@ -38,14 +69,18 @@ function LoginModal({ close }) {
           type="text"
           placeholder="Pseudo"
           value={pseudo}
-          onChange={(e) => setPseudo(e.target.value)}
+          onChange={(e) =>
+            setPseudo(e.target.value)
+          }
         />
 
         <input
           type="password"
           placeholder="Code"
           value={code}
-          onChange={(e) => setCode(e.target.value)}
+          onChange={(e) =>
+            setCode(e.target.value)
+          }
         />
 
         {error && (
@@ -54,11 +89,20 @@ function LoginModal({ close }) {
           </p>
         )}
 
-        <button onClick={handleLogin}>
-          Se connecter
+        <button
+          className="login-btn"
+          onClick={login}
+          disabled={loading}
+        >
+          {loading
+            ? "Connexion..."
+            : "Se connecter"}
         </button>
 
-        <button onClick={close}>
+        <button
+          className="close-btn"
+          onClick={() => setOpen(false)}
+        >
           Fermer
         </button>
 
