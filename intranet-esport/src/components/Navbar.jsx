@@ -1,51 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/navbar.css";
 
+import LoginModal from "./LoginModal";
+import { useAuth } from "../context/AuthContext";
+
 function Navbar() {
+  const [open, setOpen] = useState(false);
+  const { user, logout } = useAuth();
+
   return (
-    <nav className="custom-navbar navbar navbar-expand-lg">
-      <div className="container">
+    <>
+      <nav className="custom-navbar navbar navbar-expand-lg">
+        <div className="container">
 
-        <a href="#" className="navbar-brand">
-          One Prodige
-        </a>
+          {/* LOGO */}
+          <a href="#" className="navbar-brand">
+            One Prodige
+          </a>
 
-        <button
-          className="navbar-toggler text-white"
-          data-bs-toggle="collapse"
-          data-bs-target="#menu"
-        >
-          ☰
-        </button>
+          {/* MENU */}
+          <ul className="navbar-nav mx-auto d-flex flex-row gap-4">
 
-        <div className="collapse navbar-collapse" id="menu">
-          <ul className="navbar-nav mx-auto">
-
-            <li className="nav-item">
-              <a className="nav-link" href="#">Accueil</a>
+            <li>
+              <a className="nav-link" href="#">
+                Accueil
+              </a>
             </li>
 
-            <li className="nav-item">
-              <a className="nav-link" href="#">Équipe</a>
+            <li>
+              <a className="nav-link" href="#">
+                Équipe
+              </a>
             </li>
 
-            <li className="nav-item">
-              <a className="nav-link" href="#">Planning</a>
+            <li>
+              <a className="nav-link" href="#">
+                Planning
+              </a>
             </li>
 
-            <li className="nav-item">
-              <a className="nav-link" href="#">Documents</a>
+            <li>
+              <a className="nav-link" href="#">
+                Documents
+              </a>
             </li>
 
           </ul>
 
-          <button className="login-btn">
-            Connexion
-          </button>
-        </div>
+          {/* RIGHT */}
+          <div className="d-flex align-items-center gap-3">
 
-      </div>
-    </nav>
+            {user && (
+              <span className="user-name">
+                Bonjour {user.pseudo}
+              </span>
+            )}
+
+            {user ? (
+              <button
+                className="login-btn"
+                onClick={logout}
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                className="login-btn"
+                onClick={() => setOpen(true)}
+              >
+                Connexion
+              </button>
+            )}
+
+          </div>
+
+        </div>
+      </nav>
+
+      {open && (
+        <LoginModal close={() => setOpen(false)} />
+      )}
+    </>
   );
 }
 

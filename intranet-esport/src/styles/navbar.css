@@ -65,3 +65,59 @@
   background: white;
   transform: translateY(-3px);
 }
+
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.login-box {
+  background: #111;
+  padding: 35px;
+  border-radius: 18px;
+  width: 380px;
+  border: 1px solid rgba(253,182,40,0.2);
+}
+
+.login-box h2 {
+  color: #FDB628;
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #1a1a1a;
+  border: none;
+  color: white;
+  border-radius: 10px;
+}
+
+.login-box button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #FDB628;
+  font-weight: 700;
+}
+
+.login-error {
+  color: #FDB628;
+  font-weight: 600;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.user-name {
+  color: white;
+  font-weight: 500;
+}
