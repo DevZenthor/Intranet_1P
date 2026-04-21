@@ -1,0 +1,366 @@
+.compta-page {
+  min-height: 100vh;
+  padding: 140px 40px 80px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(253,182,40,0.18), transparent 20%),
+    radial-gradient(circle at bottom left, rgba(253,182,40,0.12), transparent 20%),
+    linear-gradient(135deg, #050505, #111111);
+}
+
+.compta-particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#FDB628 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.06;
+  animation: particlesMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particlesMove {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(80px); }
+}
+
+.compta-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.compta-mini {
+  text-align: center;
+  color: #FDB628;
+  letter-spacing: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.compta-title {
+  text-align: center;
+  font-size: 78px;
+  font-weight: 900;
+  color: white;
+  margin: 0 0 12px;
+  line-height: 1;
+}
+
+.compta-sub {
+  text-align: center;
+  color: #d9d9d9;
+  font-size: 18px;
+  margin-bottom: 48px;
+}
+
+/* STATS */
+.compta-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+@media (max-width: 1100px) {
+  .compta-stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .compta-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.compta-stat-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(253,182,40,0.15);
+  border-radius: 18px;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.compta-stat-card:hover {
+  border-color: rgba(253,182,40,0.35);
+  transform: translateY(-3px);
+}
+
+.compta-stat-card--gold {
+  border-color: rgba(253,182,40,0.3);
+  background: rgba(253,182,40,0.04);
+}
+
+.compta-stat-icon {
+  font-size: 1.4rem;
+}
+
+.compta-stat-label {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.compta-stat-value {
+  color: #FDB628;
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+/* TABLE */
+.compta-table-wrap {
+  overflow-x: auto;
+  border-radius: 20px;
+  border: 1px solid rgba(253,182,40,0.12);
+  box-shadow: 0 0 60px rgba(0,0,0,0.4);
+}
+
+.compta-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(8,8,8,0.92);
+}
+
+.compta-table thead tr {
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+}
+
+.compta-table thead th {
+  padding: 16px 24px;
+  text-align: left;
+  font-weight: 900;
+  font-size: 0.85rem;
+  color: #111;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.compta-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+
+.compta-table tbody tr:hover {
+  background: rgba(253,182,40,0.04);
+}
+
+.compta-table tbody td {
+  padding: 16px 24px;
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+.compta-mois {
+  color: white !important;
+  font-weight: 800 !important;
+  font-size: 1rem !important;
+}
+
+.compta-revenus {
+  color: white !important;
+  font-weight: 700 !important;
+}
+
+.compta-budget { color: #ccc !important; }
+.compta-pos    { color: #4dcc80 !important; font-weight: 700; }
+
+/* ÉTATS */
+.compta-etat {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.etat-none { background: rgba(255,76,76,0.12);   color: #ff6b6b; border: 1px solid rgba(255,76,76,0.25); }
+.etat-low  { background: rgba(255,165,0,0.12);   color: #ffa500; border: 1px solid rgba(255,165,0,0.25); }
+.etat-mid  { background: rgba(253,182,40,0.12);  color: #FDB628; border: 1px solid rgba(253,182,40,0.3); }
+.etat-high { background: rgba(77,204,128,0.12);  color: #4dcc80; border: 1px solid rgba(77,204,128,0.25); }
+
+/* TOTAL ROW */
+.compta-total-row {
+  background: rgba(253,182,40,0.06) !important;
+  border-top: 2px solid rgba(253,182,40,0.3) !important;
+}
+
+.compta-total-label {
+  color: #FDB628 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.1em;
+}
+
+.compta-total-val {
+  color: #FDB628 !important;
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+}
+
+/* EDIT BTN */
+.compta-edit-btn {
+  background: #FDB628;
+  color: #111;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+}
+
+.compta-edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 14px rgba(253,182,40,0.35);
+}
+
+.compta-loading {
+  text-align: center;
+  color: #FDB628;
+  font-size: 1.5rem;
+  margin-top: 40px;
+}
+
+/* OVERLAY */
+.compta-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* POPUP */
+.compta-popup {
+  background: linear-gradient(160deg, #1a1a1a, #0d0d0d);
+  border: 1px solid rgba(253,182,40,0.2);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.compta-popup h2 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0 0 8px;
+}
+
+.compta-label {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.popup-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popup-fields input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 13px 16px;
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.popup-fields input::placeholder { color: rgba(255,255,255,0.25); }
+.popup-fields input:focus { border-color: rgba(253,182,40,0.5); }
+
+.popup-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 13px 16px;
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+.popup-select:focus { border-color: rgba(253,182,40,0.5); }
+.popup-select option { background: #111; color: white; }
+
+.popup-save {
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  color: #111;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.popup-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(253,182,40,0.4);
+}
+
+.popup-close {
+  background: rgba(255,255,255,0.06);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.popup-close:hover { background: rgba(255,255,255,0.1); }
+
+@media (max-width: 768px) {
+  .compta-title  { font-size: 48px; }
+  .compta-page   { padding: 120px 16px 60px; }
+  .compta-popup  { padding: 28px 20px; }
+}

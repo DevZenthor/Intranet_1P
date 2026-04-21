@@ -16,6 +16,7 @@ import Joueurs from "./pages/Joueurs";
 import Performances from "./pages/Performances";
 import Creators from "./pages/Creators";
 import Videos from "./pages/Videos";
+import Compta from "./pages/Compta";
 
 function App() {
   return (
@@ -93,6 +94,15 @@ function App() {
               <Videos />
             </ProtectedRoute>
           }
+        />
+
+        <Route 
+        path="/compta" 
+        element={
+        <ProtectedRoute>
+          <Compta />
+          </ProtectedRoute>
+        } 
         />
 
       </Routes>
