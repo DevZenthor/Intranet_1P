@@ -14,6 +14,8 @@ import Scouting from "./pages/Scouting";
 import Documents from "./pages/Documents";
 import Joueurs from "./pages/Joueurs";
 import Performances from "./pages/Performances";
+import Creators from "./pages/Creators";
+import Videos from "./pages/Videos";
 
 function App() {
   return (
@@ -71,6 +73,24 @@ function App() {
           element={
             <ProtectedRoute>
               <Performances />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/creators"
+          element={
+            <ProtectedRoute>
+              <Creators />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/videos"
+          element={
+            <ProtectedRoute>
+              <Videos />
             </ProtectedRoute>
           }
         />

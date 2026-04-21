@@ -173,30 +173,74 @@ function Joueurs() {
 }
 
 function PlayerForm({ form, onChange }) {
-  const fields = [
-    { name: "nom",         placeholder: "Pseudo",      type: "text" },
-    { name: "age",         placeholder: "Âge",         type: "number" },
-    { name: "nationalite", placeholder: "Nationalité",  type: "text" },
-    { name: "categorie",   placeholder: "Catégorie (Pro / CDF / Académique)", type: "text" },
-    { name: "pr_url",      placeholder: "Lien PR Tracker", type: "text" },
-    { name: "contrats",    placeholder: "Contrat",      type: "text" },
-    { name: "twitch",      placeholder: "Twitch URL",   type: "text" },
-    { name: "youtube",     placeholder: "YouTube URL",  type: "text" },
-    { name: "twitter",     placeholder: "Twitter URL",  type: "text" },
-  ];
-
   return (
     <div className="popup-fields">
-      {fields.map(f => (
-        <input
-          key={f.name}
-          name={f.name}
-          type={f.type}
-          placeholder={f.placeholder}
-          value={form[f.name] || ""}
-          onChange={onChange}
-        />
-      ))}
+      <input
+        name="nom"
+        type="text"
+        placeholder="Pseudo"
+        value={form.nom || ""}
+        onChange={onChange}
+      />
+      <input
+        name="age"
+        type="number"
+        min="0"
+        placeholder="Âge"
+        value={form.age || ""}
+        onChange={onChange}
+      />
+      <input
+        name="nationalite"
+        type="text"
+        placeholder="Nationalité"
+        value={form.nationalite || ""}
+        onChange={onChange}
+      />
+
+      {/* MENU DÉROULANT CATÉGORIE */}
+      <select name="categorie" value={form.categorie || ""} onChange={onChange} className="popup-select">
+        <option value="">Sélectionner une catégorie</option>
+        <option value="Pro">Pro</option>
+        <option value="CDF">CDF</option>
+        <option value="Académique">Académique</option>
+      </select>
+
+      <input
+        name="pr_url"
+        type="text"
+        placeholder="Lien PR Tracker"
+        value={form.pr_url || ""}
+        onChange={onChange}
+      />
+      <input
+        name="contrats"
+        type="text"
+        placeholder="Contrat"
+        value={form.contrats || ""}
+        onChange={onChange}
+      />
+      <input
+        name="twitch"
+        type="text"
+        placeholder="Twitch URL"
+        value={form.twitch || ""}
+        onChange={onChange}
+      />
+      <input
+        name="youtube"
+        type="text"
+        placeholder="YouTube URL"
+        value={form.youtube || ""}
+        onChange={onChange}
+      />
+      <input
+        name="twitter"
+        type="text"
+        placeholder="Twitter URL"
+        value={form.twitter || ""}
+        onChange={onChange}
+      />
     </div>
   );
 }

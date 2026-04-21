@@ -57,10 +57,6 @@ function Footer() {
               Connexion
             </span>
 
-            <span className="footer-link">
-              Support
-            </span>
-
             <div className="dev-box">
               Dev by <span>Zenthor</span>
             </div>

@@ -7,6 +7,7 @@ function Navbar() {
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showFortnite, setShowFortnite] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const location = useLocation();
 
   useEffect(() => { loadUser(); }, []);
@@ -24,12 +25,13 @@ function Navbar() {
 
   const canSeeMembers = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
   const canSeeDocs    = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeContent = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
 
   const navLink = (to, label) => (
     <Link
       to={to}
       className={location.pathname === to ? "active" : ""}
-      onClick={() => setShowFortnite(false)}
+      onClick={() => { setShowFortnite(false); setShowContent(false); }}
     >
       {label}
     </Link>
@@ -48,7 +50,7 @@ function Navbar() {
             {navLink("/", "Accueil")}
             {canSeeMembers && navLink("/equipe", "Équipe")}
 
-            {/* FORTNITE — uniquement admin, CEO, Director */}
+            {/* DROPDOWN FORTNITE — admin, CEO, Director uniquement */}
             {canSeeDocs && (
               <div className="fortnite-menu">
                 <button
@@ -56,7 +58,7 @@ function Navbar() {
                     ["/scouting", "/performances", "/joueurs"].includes(location.pathname)
                       ? "active-toggle" : ""
                   }`}
-                  onClick={() => setShowFortnite(!showFortnite)}
+                  onClick={() => { setShowFortnite(!showFortnite); setShowContent(false); }}
                 >
                   Fortnite ▾
                 </button>
@@ -66,6 +68,28 @@ function Navbar() {
                     <Link to="/scouting"     onClick={() => setShowFortnite(false)}>Scouting</Link>
                     <Link to="/performances" onClick={() => setShowFortnite(false)}>Performances</Link>
                     <Link to="/joueurs"      onClick={() => setShowFortnite(false)}>Joueurs</Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* DROPDOWN CONTENT — admin, CEO, Director, Manager */}
+            {canSeeContent && (
+              <div className="fortnite-menu">
+                <button
+                  className={`fortnite-toggle ${
+                    ["/creators", "/videos"].includes(location.pathname)
+                      ? "active-toggle" : ""
+                  }`}
+                  onClick={() => { setShowContent(!showContent); setShowFortnite(false); }}
+                >
+                  Content ▾
+                </button>
+
+                {showContent && (
+                  <div className="fortnite-dropdown">
+                    <Link to="/creators" onClick={() => setShowContent(false)}>Creators</Link>
+                    <Link to="/videos"   onClick={() => setShowContent(false)}>Vidéos</Link>
                   </div>
                 )}
               </div>
