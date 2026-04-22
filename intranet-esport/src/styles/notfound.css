@@ -1,0 +1,92 @@
+.notfound-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(253,182,40,0.18), transparent 20%),
+    radial-gradient(circle at bottom left, rgba(253,182,40,0.12), transparent 20%),
+    linear-gradient(135deg, #050505, #111111);
+}
+
+.notfound-particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#FDB628 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.06;
+  animation: particlesMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particlesMove {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(80px); }
+}
+
+.notfound-container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.notfound-code {
+  font-size: 160px;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 40px rgba(253,182,40,0.3));
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { filter: drop-shadow(0 0 40px rgba(253,182,40,0.3)); }
+  50%       { filter: drop-shadow(0 0 80px rgba(253,182,40,0.6)); }
+}
+
+.notfound-title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.notfound-sub {
+  color: rgba(255,255,255,0.4);
+  font-size: 1.1rem;
+  max-width: 500px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.notfound-btn {
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  color: #111;
+  text-decoration: none;
+  padding: 14px 32px;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+}
+
+.notfound-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 28px rgba(253,182,40,0.4);
+  color: #111;
+}
+
+@media (max-width: 768px) {
+  .notfound-code  { font-size: 100px; }
+  .notfound-title { font-size: 1.8rem; }
+}

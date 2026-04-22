@@ -12,7 +12,9 @@ const ROLE_ROUTES = {
   "/compta":       ["admin", "CEO", "Director"],
   "/creators":     ["admin", "CEO", "Director", "Manager"],
   "/videos":       ["admin", "CEO", "Director", "Manager"],
-  "/profil": ["admin", "CEO", "Director", "Manager", "Coach"],
+  "/profil":       ["admin", "CEO", "Director", "Manager", "Coach"],
+  "/dashboard":    ["admin", "CEO"],
+  "/planning":     ["admin", "CEO", "Director", "Manager", "Coach"],
 };
 
 function ProtectedRoute({ children }) {
