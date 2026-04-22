@@ -205,3 +205,24 @@
     padding: 11px 18px;
   }
 }
+
+.navbar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  color: #111;
+  font-weight: 900;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.navbar-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(253,182,40,0.4);
+}

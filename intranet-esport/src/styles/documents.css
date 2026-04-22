@@ -15,8 +15,9 @@
   inset: 0;
   background-image: radial-gradient(#FDB628 1px, transparent 1px);
   background-size: 30px 30px;
-  opacity: 0.08;
+  opacity: 0.06;
   animation: particlesMove 20s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes particlesMove {
@@ -42,6 +43,8 @@
   color: #fdb628;
   letter-spacing: 8px;
   font-weight: 800;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
 }
 
 .documents-container h1 {
@@ -50,70 +53,90 @@
   font-weight: 900;
   color: white;
   margin: 10px 0;
+  line-height: 1;
 }
 
 .documents-sub {
   text-align: center;
   color: #d9d9d9;
-  font-size: 22px;
+  font-size: 18px;
   margin-bottom: 35px;
 }
 
 .add-btn {
   display: block;
   margin: 0 auto 40px;
-  background: #fdb628;
+  background: linear-gradient(135deg, #fdb628, #ffcf63);
   border: none;
-  padding: 15px 26px;
+  padding: 14px 28px;
   font-weight: 900;
   border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
+  color: #111;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(253, 182, 40, 0.35);
+  box-shadow: 0 0 20px rgba(253,182,40,0.35);
 }
 
+/* GRID */
 .docs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 }
 
+/* CARD */
 .doc-card {
-  background: rgba(8, 8, 8, 0.94);
-  border: 1px solid rgba(253, 182, 40, 0.15);
-  padding: 25px;
+  background: rgba(8,8,8,0.94);
+  border: 1px solid rgba(253,182,40,0.15);
+  padding: 22px;
   border-radius: 18px;
-  transition: border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, transform 0.2s;
 }
 
 .doc-card:hover {
-  border-color: rgba(253, 182, 40, 0.3);
+  border-color: rgba(253,182,40,0.3);
+  transform: translateY(-3px);
 }
 
 .doc-card h3 {
   color: white;
-  font-size: 28px;
-  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.3;
+  word-break: break-word;
 }
 
 .doc-card span {
   color: #fdb628;
   font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: capitalize;
 }
 
 .doc-card p {
-  color: #ccc;
-  margin: 18px 0;
+  color: #999;
+  margin: 0;
+  font-size: 0.82rem;
+  word-break: break-all;
+  line-height: 1.4;
 }
 
+/* ACTIONS */
 .doc-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 6px;
 }
 
 .open-btn,
@@ -122,25 +145,26 @@
 .save-btn,
 .close-btn {
   border: none;
-  padding: 12px 18px;
-  border-radius: 12px;
+  padding: 9px 14px;
+  border-radius: 10px;
   font-weight: 800;
   cursor: pointer;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
 }
 
 .open-btn,
 .save-btn {
   background: #fdb628;
-  color: black;
+  color: #111;
 }
 
 .open-btn:hover,
 .save-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 16px rgba(253, 182, 40, 0.35);
+  box-shadow: 0 0 14px rgba(253,182,40,0.35);
 }
 
 .download-btn {
@@ -154,12 +178,12 @@
 
 .delete-btn {
   background: #ff4040;
-  color: white;
+  color: white !important;
 }
 
 .delete-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 14px rgba(255, 64, 64, 0.35);
+  box-shadow: 0 0 14px rgba(255,64,64,0.35);
 }
 
 .loading {
@@ -172,88 +196,116 @@
 .popup-bg {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0,0,0,0.78);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(6px);
+  z-index: 999999;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .popup-box {
   width: 460px;
-  background: #0b0b0b;
-  border: 1px solid rgba(253, 182, 40, 0.18);
-  padding: 34px;
-  border-radius: 22px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
-  animation: pop 0.25s ease;
+  max-width: 95%;
+  background: linear-gradient(160deg, #1a1a1a, #0d0d0d);
+  border: 1px solid rgba(253,182,40,0.2);
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 .popup-box h2 {
   color: white;
-  font-size: 34px;
+  font-size: 1.6rem;
   font-weight: 900;
-  margin-bottom: 20px;
+  margin: 0 0 4px;
 }
 
 .popup-box p {
   color: #d7d7d7;
-  margin-bottom: 20px;
+  margin: 0;
+  line-height: 1.6;
 }
 
 .popup-box input {
   width: 100%;
-  padding: 15px;
-  margin-bottom: 14px;
-  border: none;
-  border-radius: 14px;
-  background: #151515;
+  padding: 13px 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
   color: white;
   box-sizing: border-box;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
 }
 
-.popup-box input:focus {
-  outline: 1px solid rgba(253, 182, 40, 0.4);
-}
+.popup-box input::placeholder { color: rgba(255,255,255,0.25); }
+.popup-box input:focus { border-color: rgba(253,182,40,0.5); }
 
 .save-btn {
   width: 100%;
   padding: 14px;
   border: none;
-  background: #fdb628;
+  background: linear-gradient(135deg, #fdb628, #ffcf63);
+  color: #111;
   font-weight: 900;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
-  margin-top: 8px;
   font-size: 1rem;
+  font-family: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(253,182,40,0.4);
 }
 
 .close-btn {
   width: 100%;
   padding: 14px;
   border: none;
-  background: #1b1b1b;
+  background: rgba(255,255,255,0.06);
   color: white;
   font-weight: 800;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
-  margin-top: 10px;
   font-size: 1rem;
+  font-family: inherit;
+  transition: background 0.2s;
 }
+
+.close-btn:hover { background: rgba(255,255,255,0.1); }
 
 .delete-row {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
 }
 
 .delete-row button {
   flex: 1;
 }
 
-@keyframes pop {
-  from { transform: scale(0.85); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
+@media (max-width: 768px) {
+  .documents-container h1 { font-size: 48px; }
+  .documents-page { padding: 120px 16px 60px; }
+  .docs-grid { grid-template-columns: 1fr; }
+  .popup-box { padding: 28px 20px; }
 }

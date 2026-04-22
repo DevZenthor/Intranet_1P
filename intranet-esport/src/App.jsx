@@ -18,6 +18,7 @@ import Creators from "./pages/Creators";
 import Videos from "./pages/Videos";
 import Compta from "./pages/Compta";
 import Annonces from "./pages/Annonces";
+import Profil from "./pages/Profil";
 
 function App() {
   return (
@@ -111,6 +112,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Annonces />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profil"
+          element={
+            <ProtectedRoute>
+              <Profil />
             </ProtectedRoute>
           }
         />

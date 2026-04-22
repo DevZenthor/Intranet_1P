@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../services/supabase";
+import { useLang } from "../context/LanguageContext";
+import translations from "../context/translations";
 import "../styles/performances.css";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 function Performances() {
   const [perfs, setPerfs] = useState([]);
@@ -12,230 +14,142 @@ function Performances() {
   const [showAdd, setShowAdd] = useState(false);
   const [editPerf, setEditPerf] = useState(null);
   const [deletePerf, setDeletePerf] = useState(null);
+  const { lang } = useLang();
+  const t = translations[lang];
 
   const user = JSON.parse(localStorage.getItem("user"));
   const canManage = user && ["admin", "CEO", "Director"].includes(user.role);
 
-  const emptyForm = {
-    joueur: "", format: "", nom_cup: "", classement: "",
-    pr_gagne: "", kills: "", top1: "", points: "", cash_prize: ""
-  };
+  const emptyForm = { joueur: "", format: "", nom_cup: "", classement: "", pr_gagne: "", kills: "", top1: "", points: "", cash_prize: "", date: "" };
   const [form, setForm] = useState(emptyForm);
 
-  useEffect(() => {
-    loadPerfs();
-    loadPlayers();
-  }, []);
+  useEffect(() => { loadPerfs(); loadPlayers(); }, []);
+
+  function parseDate(str) {
+    if (!str) return 0;
+    const parts = str.split("/");
+    if (parts.length !== 3) return 0;
+    return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
+  }
 
   async function loadPerfs() {
-    const { data } = await supabase
-      .from("performances")
-      .select("*")
-      .order("id", { ascending: false });
-    setPerfs(data || []);
+    const { data } = await supabase.from("performances").select("*");
+    const sorted = (data || []).sort((a, b) => parseDate(b.date) - parseDate(a.date));
+    setPerfs(sorted);
     setLoading(false);
   }
 
   async function loadPlayers() {
-    const { data } = await supabase
-      .from("players")
-      .select("nom")
-      .order("nom", { ascending: true });
+    const { data } = await supabase.from("players").select("nom").order("nom", { ascending: true });
     setPlayers(data || []);
   }
 
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
+  function handleChange(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
 
   async function addPerf() {
     if (!form.joueur || !form.nom_cup) { alert("Joueur et nom de cup requis"); return; }
-    await supabase.from("performances").insert([{
-      ...form,
-      classement: parseInt(form.classement) || 0,
-      pr_gagne: parseInt(form.pr_gagne) || 0,
-      kills: parseInt(form.kills) || 0,
-      top1: parseInt(form.top1) || 0,
-      points: parseInt(form.points) || 0,
-    }]);
-    setShowAdd(false);
-    setForm(emptyForm);
-    loadPerfs();
+    await supabase.from("performances").insert([{ ...form, classement: parseInt(form.classement)||0, pr_gagne: parseInt(form.pr_gagne)||0, kills: parseInt(form.kills)||0, top1: parseInt(form.top1)||0, points: parseInt(form.points)||0 }]);
+    setShowAdd(false); setForm(emptyForm); loadPerfs();
   }
 
   async function updatePerf() {
-    await supabase.from("performances").update({
-      ...form,
-      classement: parseInt(form.classement) || 0,
-      pr_gagne: parseInt(form.pr_gagne) || 0,
-      kills: parseInt(form.kills) || 0,
-      top1: parseInt(form.top1) || 0,
-      points: parseInt(form.points) || 0,
-    }).eq("id", editPerf.id);
-    setEditPerf(null);
-    setForm(emptyForm);
-    loadPerfs();
+    await supabase.from("performances").update({ ...form, classement: parseInt(form.classement)||0, pr_gagne: parseInt(form.pr_gagne)||0, kills: parseInt(form.kills)||0, top1: parseInt(form.top1)||0, points: parseInt(form.points)||0 }).eq("id", editPerf.id);
+    setEditPerf(null); setForm(emptyForm); loadPerfs();
   }
 
   async function confirmDelete() {
     await supabase.from("performances").delete().eq("id", deletePerf.id);
-    setDeletePerf(null);
-    loadPerfs();
+    setDeletePerf(null); loadPerfs();
   }
 
-  function openEdit(p) {
-    setForm({ ...p });
-    setEditPerf(p);
-  }
+  function openEdit(p) { setForm({ ...p }); setEditPerf(p); }
 
-  // FILTRES
   const filtered = perfs.filter(p => {
     const okJoueur = filterJoueur === "tous" || p.joueur === filterJoueur;
     const okFormat = filterFormat === "tous" || p.format === filterFormat;
     return okJoueur && okFormat;
   });
 
-  // STATS calculées sur les données filtrées
   const stats = {
-    avgKills: filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.kills || 0), 0) / filtered.length) : 0,
-    avgPoints: filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.points || 0), 0) / filtered.length) : 0,
-    totalPR: filtered.reduce((s, p) => s + (p.pr_gagne || 0), 0),
-    bestPoints: filtered.length ? Math.max(...filtered.map(p => p.points || 0)) : 0,
+    avgKills:    filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.kills   || 0), 0) / filtered.length) : 0,
+    avgPoints:   filtered.length ? Math.round(filtered.reduce((s, p) => s + (p.points  || 0), 0) / filtered.length) : 0,
+    totalPR:     filtered.reduce((s, p) => s + (p.pr_gagne || 0), 0),
+    bestPoints:  filtered.length ? Math.max(...filtered.map(p => p.points || 0)) : 0,
     worstPoints: filtered.length ? Math.min(...filtered.map(p => p.points || 0)) : 0,
   };
 
   const joueurs = [...new Set(perfs.map(p => p.joueur).filter(Boolean))];
 
+  const prParJoueur = {};
+  filtered.forEach(p => { if (!prParJoueur[p.joueur]) prParJoueur[p.joueur] = 0; prParJoueur[p.joueur] += (p.pr_gagne || 0); });
+  const chartData = Object.entries(prParJoueur).map(([joueur, pr]) => ({ joueur, pr }));
+
   return (
     <section className="perf-page">
       <div className="perf-particles" />
-
       <div className="perf-container">
 
-        <p className="perf-mini">ONE PRODIGE</p>
-        <h1 className="perf-title">Performances</h1>
-        <p className="perf-sub">Statistiques compétitives Fortnite</p>
+        <p className="perf-mini">{t.perf_mini}</p>
+        <h1 className="perf-title">{t.perf_title}</h1>
+        <p className="perf-sub">{t.perf_sub}</p>
 
-        {/* FILTRES */}
         <div className="perf-filters">
-          <select
-            className="perf-select"
-            value={filterJoueur}
-            onChange={(e) => setFilterJoueur(e.target.value)}
-          >
-            <option value="tous">Tous les joueurs</option>
-            {joueurs.map(j => (
-              <option key={j} value={j}>{j}</option>
-            ))}
+          <select className="perf-select" value={filterJoueur} onChange={(e) => setFilterJoueur(e.target.value)}>
+            <option value="tous">{t.perf_all_players}</option>
+            {joueurs.map(j => <option key={j} value={j}>{j}</option>)}
           </select>
-
-          <select
-            className="perf-select"
-            value={filterFormat}
-            onChange={(e) => setFilterFormat(e.target.value)}
-          >
-            <option value="tous">Tous les formats</option>
+          <select className="perf-select" value={filterFormat} onChange={(e) => setFilterFormat(e.target.value)}>
+            <option value="tous">{t.perf_all_formats}</option>
             <option value="Solo">Solo</option>
             <option value="Duo">Duo</option>
             <option value="Trio">Trio</option>
             <option value="Squad">Squad</option>
           </select>
-
-          {canManage && (
-            <button className="perf-add-btn" onClick={() => { setForm(emptyForm); setShowAdd(true); }}>
-              + Ajouter
-            </button>
-          )}
+          {canManage && <button className="perf-add-btn" onClick={() => { setForm(emptyForm); setShowAdd(true); }}>{t.perf_add}</button>}
         </div>
 
-        {/* STATS CARDS */}
         <div className="perf-stats-grid">
-          <div className="perf-stat-card">
-            <span className="perf-stat-label">Kills moyens</span>
-            <span className="perf-stat-value">{stats.avgKills}</span>
-          </div>
-          <div className="perf-stat-card">
-            <span className="perf-stat-label">Points moyens</span>
-            <span className="perf-stat-value">{stats.avgPoints}</span>
-          </div>
-          <div className="perf-stat-card">
-            <span className="perf-stat-label">Total PR gagné</span>
-            <span className="perf-stat-value">{stats.totalPR.toLocaleString()}</span>
-          </div>
-          <div className="perf-stat-card perf-stat-card--best">
-            <span className="perf-stat-label">Meilleure perf</span>
-            <span className="perf-stat-value">{stats.bestPoints} pts</span>
-          </div>
-          <div className="perf-stat-card perf-stat-card--worst">
-            <span className="perf-stat-label">Pire perf</span>
-            <span className="perf-stat-value">{stats.worstPoints} pts</span>
-          </div>
+          <div className="perf-stat-card"><span className="perf-stat-label">{t.perf_avg_kills}</span><span className="perf-stat-value">{stats.avgKills}</span></div>
+          <div className="perf-stat-card"><span className="perf-stat-label">{t.perf_avg_points}</span><span className="perf-stat-value">{stats.avgPoints}</span></div>
+          <div className="perf-stat-card"><span className="perf-stat-label">{t.perf_total_pr}</span><span className="perf-stat-value">{stats.totalPR.toLocaleString()}</span></div>
+          <div className="perf-stat-card perf-stat-card--best"><span className="perf-stat-label">{t.perf_best}</span><span className="perf-stat-value">{stats.bestPoints} pts</span></div>
+          <div className="perf-stat-card perf-stat-card--worst"><span className="perf-stat-label">{t.perf_worst}</span><span className="perf-stat-value">{stats.worstPoints} pts</span></div>
         </div>
 
-        {/* GRAPHIQUE PR GAGNÉ PAR JOUEUR */}
-        {(() => {
-          const prParJoueur = {};
-          filtered.forEach(p => {
-            if (!prParJoueur[p.joueur]) prParJoueur[p.joueur] = 0;
-            prParJoueur[p.joueur] += (p.pr_gagne || 0);
-          });
-          const chartData = Object.entries(prParJoueur).map(([joueur, pr]) => ({ joueur, pr }));
+        {chartData.length > 0 && (
+          <div className="perf-chart-box">
+            <h3 className="perf-chart-title">{t.perf_chart}</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                <XAxis dataKey="joueur" stroke="#aaa" tick={{ fill: "#ccc", fontWeight: 700 }} />
+                <YAxis stroke="#aaa" tick={{ fill: "#ccc" }} />
+                <Tooltip contentStyle={{ background: "#111", border: "1px solid rgba(253,182,40,0.3)", borderRadius: 12 }} labelStyle={{ color: "#FDB628", fontWeight: 900 }} itemStyle={{ color: "white" }} />
+                <Bar dataKey="pr" name={t.perf_pr} fill="#FDB628" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
-          return chartData.length > 0 ? (
-            <div className="perf-chart-box">
-              <h3 className="perf-chart-title">PR Gagné par Joueur</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                  <XAxis dataKey="joueur" stroke="#aaa" tick={{ fill: "#ccc", fontWeight: 700 }} />
-                  <YAxis stroke="#aaa" tick={{ fill: "#ccc" }} />
-                  <Tooltip
-                    contentStyle={{ background: "#111", border: "1px solid rgba(253,182,40,0.3)", borderRadius: 12 }}
-                    labelStyle={{ color: "#FDB628", fontWeight: 900 }}
-                    itemStyle={{ color: "white" }}
-                  />
-                  <Bar dataKey="pr" name="PR Gagné" fill="#FDB628" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : null;
-        })()}
-
-        {/* TABLE */}
-        {loading ? (
-          <p className="perf-loading">Chargement...</p>
-        ) : (
+        {loading ? <p className="perf-loading">{t.perf_loading}</p> : (
           <div className="perf-table-wrap">
             <table className="perf-table">
               <thead>
                 <tr>
-                  <th>Joueur</th>
-                  <th>Format</th>
-                  <th>Cup</th>
-                  <th>Classement</th>
-                  <th>PR Gagné</th>
-                  <th>Kills</th>
-                  <th>Top 1</th>
-                  <th>Points</th>
-                  <th>Cash</th>
-                  {canManage && <th>Actions</th>}
+                  <th>{t.perf_joueur}</th><th>{t.perf_format}</th><th>{t.perf_cup}</th>
+                  <th>{t.perf_date}</th><th>{t.perf_class}</th><th>{t.perf_pr}</th>
+                  <th>{t.perf_kills}</th><th>{t.perf_top1}</th><th>{t.perf_points}</th>
+                  <th>{t.perf_cash}</th>{canManage && <th>{t.perf_actions}</th>}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan={canManage ? 10 : 9} className="perf-empty">
-                      Aucune performance trouvée
-                    </td>
-                  </tr>
+                  <tr><td colSpan={canManage ? 11 : 10} className="perf-empty">{t.perf_empty}</td></tr>
                 ) : filtered.map((p) => (
                   <tr key={p.id}>
                     <td className="perf-joueur">{p.joueur}</td>
-                    <td>
-                      <span className={`perf-badge ${p.format === "Solo" ? "badge-solo" : "badge-duo"}`}>
-                        {p.format}
-                      </span>
-                    </td>
+                    <td><span className={`perf-badge ${p.format === "Solo" ? "badge-solo" : "badge-duo"}`}>{p.format}</span></td>
                     <td className="perf-cup">{p.nom_cup}</td>
+                    <td className="perf-date">{p.date || "—"}</td>
                     <td className="perf-rank">#{p.classement}</td>
                     <td className={p.pr_gagne > 0 ? "perf-green" : ""}>{p.pr_gagne || 0}</td>
                     <td>{p.kills || 0}</td>
@@ -244,8 +158,8 @@ function Performances() {
                     <td>{p.cash_prize || "$0.00"}</td>
                     {canManage && (
                       <td className="perf-actions">
-                        <button className="btn-edit" onClick={() => openEdit(p)}>Modifier</button>
-                        <button className="btn-delete" onClick={() => setDeletePerf(p)}>Supprimer</button>
+                        <button className="btn-edit" onClick={() => openEdit(p)}>{t.perf_modifier}</button>
+                        <button className="btn-delete" onClick={() => setDeletePerf(p)}>{t.perf_supprimer}</button>
                       </td>
                     )}
                   </tr>
@@ -256,40 +170,35 @@ function Performances() {
         )}
       </div>
 
-      {/* POPUP AJOUTER */}
       {showAdd && (
         <div className="perf-overlay" onClick={(e) => e.target === e.currentTarget && setShowAdd(false)}>
           <div className="perf-popup">
-            <h2>Ajouter performance</h2>
-            <PerfForm form={form} onChange={handleChange} players={players} />
-            <button className="popup-save" onClick={addPerf}>Sauvegarder</button>
-            <button className="popup-close" onClick={() => setShowAdd(false)}>Fermer</button>
+            <h2>{t.perf_add_title}</h2>
+            <PerfForm form={form} onChange={handleChange} players={players} t={t} />
+            <button className="popup-save" onClick={addPerf}>{t.perf_save}</button>
+            <button className="popup-close" onClick={() => setShowAdd(false)}>{t.perf_close}</button>
           </div>
         </div>
       )}
 
-      {/* POPUP MODIFIER */}
       {editPerf && (
         <div className="perf-overlay" onClick={(e) => e.target === e.currentTarget && setEditPerf(null)}>
           <div className="perf-popup">
-            <h2>Modifier performance</h2>
-            <PerfForm form={form} onChange={handleChange} players={players} />
-            <button className="popup-save" onClick={updatePerf}>Sauvegarder</button>
-            <button className="popup-close" onClick={() => setEditPerf(null)}>Fermer</button>
+            <h2>{t.perf_edit_title}</h2>
+            <PerfForm form={form} onChange={handleChange} players={players} t={t} />
+            <button className="popup-save" onClick={updatePerf}>{t.perf_save}</button>
+            <button className="popup-close" onClick={() => setEditPerf(null)}>{t.perf_close}</button>
           </div>
         </div>
       )}
 
-      {/* POPUP SUPPRIMER */}
       {deletePerf && (
         <div className="perf-overlay" onClick={(e) => e.target === e.currentTarget && setDeletePerf(null)}>
           <div className="perf-popup perf-popup--delete">
-            <h2>Supprimer performance ?</h2>
-            <p>Cette action est irréversible.<br />
-              <strong>{deletePerf.joueur}</strong> — {deletePerf.nom_cup}
-            </p>
-            <button className="popup-confirm-delete" onClick={confirmDelete}>Oui supprimer</button>
-            <button className="popup-close" onClick={() => setDeletePerf(null)}>Annuler</button>
+            <h2>{t.perf_del_title}</h2>
+            <p>{t.perf_del_text}<br /><strong>{deletePerf.joueur}</strong> — {deletePerf.nom_cup}</p>
+            <button className="popup-confirm-delete" onClick={confirmDelete}>{t.perf_oui}</button>
+            <button className="popup-close" onClick={() => setDeletePerf(null)}>{t.perf_annuler}</button>
           </div>
         </div>
       )}
@@ -297,41 +206,31 @@ function Performances() {
   );
 }
 
-function PerfForm({ form, onChange, players }) {
+function PerfForm({ form, onChange, players, t }) {
   return (
     <div className="popup-fields">
       <select name="joueur" value={form.joueur || ""} onChange={onChange} className="popup-select">
-        <option value="">Sélectionner un joueur</option>
-        {players.map(p => (
-          <option key={p.nom} value={p.nom}>{p.nom}</option>
-        ))}
+        <option value="">{t.perf_joueur}</option>
+        {players.map(p => <option key={p.nom} value={p.nom}>{p.nom}</option>)}
       </select>
-
       <select name="format" value={form.format || ""} onChange={onChange} className="popup-select">
-        <option value="">Format</option>
+        <option value="">{t.perf_format}</option>
         <option value="Solo">Solo</option>
         <option value="Duo">Duo</option>
         <option value="Trio">Trio</option>
         <option value="Squad">Squad</option>
       </select>
-
       {[
-        { name: "nom_cup", placeholder: "Nom de la Cup", type: "text" },
-        { name: "classement", placeholder: "Classement", type: "number" },
-        { name: "pr_gagne", placeholder: "PR Gagné", type: "number" },
-        { name: "kills", placeholder: "Kills", type: "number" },
-        { name: "top1", placeholder: "Top 1 (1 ou 0)", type: "number" },
-        { name: "points", placeholder: "Points", type: "number" },
-        { name: "cash_prize", placeholder: "Cash Prize", type: "text" },
+        { name: "nom_cup",    placeholder: t.perf_cup,    type: "text"   },
+        { name: "date",       placeholder: t.perf_date + " (ex: 16/3/2026)", type: "text" },
+        { name: "classement", placeholder: t.perf_class,  type: "number" },
+        { name: "pr_gagne",   placeholder: t.perf_pr,     type: "number" },
+        { name: "kills",      placeholder: t.perf_kills,  type: "number" },
+        { name: "top1",       placeholder: t.perf_top1 + " (1/0)", type: "number" },
+        { name: "points",     placeholder: t.perf_points, type: "number" },
+        { name: "cash_prize", placeholder: t.perf_cash,   type: "text"   },
       ].map(f => (
-        <input
-          key={f.name}
-          name={f.name}
-          type={f.type}
-          placeholder={f.placeholder}
-          value={form[f.name] || ""}
-          onChange={onChange}
-        />
+        <input key={f.name} name={f.name} type={f.type} placeholder={f.placeholder} value={form[f.name] || ""} onChange={onChange} />
       ))}
     </div>
   );
