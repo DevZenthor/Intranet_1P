@@ -286,7 +286,7 @@ function EventForm({ form, onChange, lang }) {
       />
       <select name="type" value={form.type || "Stream"} onChange={onChange} className="popup-select">
         <option value="Stream">🎥 Stream</option>
-        <option value="Webtv">📺 Webtv</option>
+        <option value="Webtv">📺 Youtube</option>
         <option value="Tournoi">🏆 Tournoi</option>
       </select>
       <input

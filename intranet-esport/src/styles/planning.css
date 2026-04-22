@@ -320,8 +320,8 @@
   letter-spacing: 0.05em;
 }
 
-.type-stream  { color: #64b4ff; }
-.type-webtv   { color: #b478ff; }
+.type-stream  { color: mediumpurple; }
+.type-webtv   { color: red; }
 .type-tournoi { color: #FDB628; }
 
 .planning-event-heure {
