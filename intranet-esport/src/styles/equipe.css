@@ -289,3 +289,31 @@
     font-size: 28px;
   }
 }
+
+.equipe-filters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.equipe-filter-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 22px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.equipe-filter-btn:hover,
+.equipe-filter-btn.active {
+  background: rgba(253,182,40,0.12);
+  border-color: rgba(253,182,40,0.4);
+  color: #FDB628;
+}

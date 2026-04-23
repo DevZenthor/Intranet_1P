@@ -11,6 +11,7 @@ function Equipe() {
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [menuOpen, setMenuOpen] = useState(null);
+  const [filterCat, setFilterCat] = useState("tous");
   const { lang } = useLang();
   const t = translations[lang];
 
@@ -54,9 +55,9 @@ function Equipe() {
     fetchMembers();
   };
 
-  const staffs   = members.filter((m) => m.category === "staff");
-  const players  = members.filter((m) => m.category === "player");
-  const contents = members.filter((m) => m.category === "content");
+  const staffs   = members.filter(m => m.category === "staff"   && (filterCat === "tous" || filterCat === "staff"));
+  const players  = members.filter(m => m.category === "player"  && (filterCat === "tous" || filterCat === "player"));
+  const contents = members.filter(m => m.category === "content" && (filterCat === "tous" || filterCat === "content"));
 
   const renderCards = (list) =>
     list.map((member) => (
@@ -83,6 +84,13 @@ function Equipe() {
       </div>
     ));
 
+  const CATS = [
+    { key: "tous",    label: lang === "fr" ? "Tous"    : "All"     },
+    { key: "staff",   label: lang === "fr" ? "Staff"   : "Staff"   },
+    { key: "player",  label: lang === "fr" ? "Players" : "Players" },
+    { key: "content", label: lang === "fr" ? "Content" : "Content" },
+  ];
+
   return (
     <section className="team-page">
       <div className="container">
@@ -99,22 +107,41 @@ function Equipe() {
           )}
         </div>
 
+        {/* FILTRES */}
+        <div className="equipe-filters">
+          {CATS.map(cat => (
+            <button
+              key={cat.key}
+              className={`equipe-filter-btn ${filterCat === cat.key ? "active" : ""}`}
+              onClick={() => setFilterCat(cat.key)}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
         {loading ? (
           <h3 className="text-white text-center">{t.equipe_loading}</h3>
         ) : (
           <>
-            <div className="team-section">
-              <h2 className="section-title"><FaCrown /> {t.equipe_staff}</h2>
-              <div className="row g-4">{renderCards(staffs)}</div>
-            </div>
-            <div className="team-section">
-              <h2 className="section-title"><FaPlay /> {t.equipe_players}</h2>
-              <div className="row g-4">{renderCards(players)}</div>
-            </div>
-            <div className="team-section">
-              <h2 className="section-title"><FaVideo /> {t.equipe_content}</h2>
-              <div className="row g-4">{renderCards(contents)}</div>
-            </div>
+            {(filterCat === "tous" || filterCat === "staff") && (
+              <div className="team-section">
+                <h2 className="section-title"><FaCrown /> {t.equipe_staff}</h2>
+                <div className="row g-4">{renderCards(staffs)}</div>
+              </div>
+            )}
+            {(filterCat === "tous" || filterCat === "player") && (
+              <div className="team-section">
+                <h2 className="section-title"><FaPlay /> {t.equipe_players}</h2>
+                <div className="row g-4">{renderCards(players)}</div>
+              </div>
+            )}
+            {(filterCat === "tous" || filterCat === "content") && (
+              <div className="team-section">
+                <h2 className="section-title"><FaVideo /> {t.equipe_content}</h2>
+                <div className="row g-4">{renderCards(contents)}</div>
+              </div>
+            )}
           </>
         )}
 

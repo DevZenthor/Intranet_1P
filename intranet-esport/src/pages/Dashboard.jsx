@@ -14,6 +14,8 @@ function Dashboard() {
 
   const [stats, setStats] = useState({ membres: 0, videos: 0, performances: 0, documents: 0, creators: 0, joueurs: 0 });
   const [users, setUsers] = useState([]);
+  const [membres, setMembres] = useState([]);
+  const [filterMembreCat, setFilterMembreCat] = useState("tous");
   const [showAddUser, setShowAddUser] = useState(false);
   const [deleteUser, setDeleteUser] = useState(null);
   const [editUserRole, setEditUserRole] = useState(null);
@@ -40,6 +42,7 @@ function Dashboard() {
       { data: comptaData },
       { data: perfsData },
       { data: videosData },
+      { data: membresData },
     ] = await Promise.all([
       supabase.from("members").select("*",      { count: "exact", head: true }),
       supabase.from("videos").select("*",       { count: "exact", head: true }),
@@ -52,10 +55,12 @@ function Dashboard() {
       supabase.from("compta").select("*"),
       supabase.from("performances").select("joueur, pr_gagne").limit(50),
       supabase.from("videos").select("*").order("id", { ascending: false }).limit(5),
+      supabase.from("members").select("*").order("id", { ascending: true }),
     ]);
 
     setStats({ membres, videos, performances, documents, creators, joueurs });
     setUsers(usersData || []);
+    setMembres(membresData || []);
     setAnnonces(annoncesData || []);
     const sortedCompta = (comptaData || []).sort((a, b) => ORDRE_MOIS.indexOf(a.mois) - ORDRE_MOIS.indexOf(b.mois));
     setCompta(sortedCompta);
@@ -108,6 +113,17 @@ function Dashboard() {
     "Announcement": { icon: "📢", color: "type-annonce" },
     "Signing":      { icon: "✅", color: "type-recrue"  },
   };
+
+  const CATS = [
+    { key: "tous",    label: lang === "fr" ? "Tous"    : "All"     },
+    { key: "staff",   label: "Staff"   },
+    { key: "player",  label: lang === "fr" ? "Players" : "Players" },
+    { key: "content", label: "Content" },
+  ];
+
+  const membresFiltres = membres.filter(m =>
+    filterMembreCat === "tous" || m.category === filterMembreCat
+  );
 
   if (loading) return (
     <section className="dashboard-page">
@@ -184,6 +200,41 @@ function Dashboard() {
           </div>
         </div>
 
+        {/* MEMBRES FILTRES */}
+        <div className="dashboard-section dashboard-section--full">
+          <div className="dashboard-section-header">
+            <h2>{lang === "fr" ? "Membres" : "Members"}</h2>
+            <div className="dashboard-membre-filters">
+              {CATS.map(cat => (
+                <button
+                  key={cat.key}
+                  className={`dashboard-filter-btn ${filterMembreCat === cat.key ? "active" : ""}`}
+                  onClick={() => setFilterMembreCat(cat.key)}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="dashboard-membres-grid">
+            {membresFiltres.map(m => (
+              <div key={m.id} className="dashboard-membre-card">
+                <div className="dashboard-membre-avatar">
+                  {m.pseudo?.charAt(0).toUpperCase()}
+                </div>
+                <div className="dashboard-membre-info">
+                  <span className="dashboard-membre-pseudo">{m.pseudo}</span>
+                  <span className="dashboard-membre-role">{m.role || "—"}</span>
+                </div>
+                <span className={`dashboard-membre-cat cat-${m.category}`}>
+                  {m.category}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* BOTTOM GRID */}
         <div className="dashboard-bottom-grid">
 
@@ -214,16 +265,10 @@ function Dashboard() {
                       </td>
                       <td>
                         <div className="dashboard-user-actions">
-                          <button
-                            className="dashboard-edit-role-btn"
-                            onClick={() => { setEditUserRole(u); setNewRole(u.role); }}
-                          >
+                          <button className="dashboard-edit-role-btn" onClick={() => { setEditUserRole(u); setNewRole(u.role); }}>
                             {lang === "fr" ? "Rôle" : "Role"}
                           </button>
-                          <button
-                            className="dashboard-delete-btn"
-                            onClick={() => setDeleteUser(u)}
-                          >
+                          <button className="dashboard-delete-btn" onClick={() => setDeleteUser(u)}>
                             {lang === "fr" ? "Supprimer" : "Delete"}
                           </button>
                         </div>
@@ -289,23 +334,9 @@ function Dashboard() {
           <div className="dashboard-popup">
             <h2>{lang === "fr" ? "Ajouter un utilisateur" : "Add a user"}</h2>
             <div className="popup-fields">
-              <input
-                type="text"
-                placeholder={lang === "fr" ? "Pseudo" : "Username"}
-                value={userForm.pseudo}
-                onChange={(e) => setUserForm({ ...userForm, pseudo: e.target.value })}
-              />
-              <input
-                type="password"
-                placeholder="Code"
-                value={userForm.code}
-                onChange={(e) => setUserForm({ ...userForm, code: e.target.value })}
-              />
-              <select
-                className="popup-select"
-                value={userForm.role}
-                onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
-              >
+              <input type="text" placeholder={lang === "fr" ? "Pseudo" : "Username"} value={userForm.pseudo} onChange={(e) => setUserForm({ ...userForm, pseudo: e.target.value })} />
+              <input type="password" placeholder="Code" value={userForm.code} onChange={(e) => setUserForm({ ...userForm, code: e.target.value })} />
+              <select className="popup-select" value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
                 <option value="admin">Admin</option>
                 <option value="CEO">CEO</option>
                 <option value="Director">Director</option>
@@ -313,12 +344,8 @@ function Dashboard() {
                 <option value="Coach">Coach</option>
               </select>
             </div>
-            <button className="popup-save" onClick={addUser}>
-              {lang === "fr" ? "Ajouter" : "Add"}
-            </button>
-            <button className="popup-close" onClick={() => setShowAddUser(false)}>
-              {lang === "fr" ? "Fermer" : "Close"}
-            </button>
+            <button className="popup-save" onClick={addUser}>{lang === "fr" ? "Ajouter" : "Add"}</button>
+            <button className="popup-close" onClick={() => setShowAddUser(false)}>{lang === "fr" ? "Fermer" : "Close"}</button>
           </div>
         </div>
       )}
@@ -327,17 +354,9 @@ function Dashboard() {
       {editUserRole && (
         <div className="dashboard-overlay" onClick={(e) => e.target === e.currentTarget && setEditUserRole(null)}>
           <div className="dashboard-popup">
-            <h2>
-              {lang === "fr"
-                ? `Modifier le rôle de ${editUserRole.pseudo}`
-                : `Edit ${editUserRole.pseudo}'s role`}
-            </h2>
+            <h2>{lang === "fr" ? `Modifier le rôle de ${editUserRole.pseudo}` : `Edit ${editUserRole.pseudo}'s role`}</h2>
             <div className="popup-fields">
-              <select
-                className="popup-select"
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-              >
+              <select className="popup-select" value={newRole} onChange={(e) => setNewRole(e.target.value)}>
                 <option value="admin">Admin</option>
                 <option value="CEO">CEO</option>
                 <option value="Director">Director</option>
@@ -345,12 +364,8 @@ function Dashboard() {
                 <option value="Coach">Coach</option>
               </select>
             </div>
-            <button className="popup-save" onClick={updateUserRole}>
-              {lang === "fr" ? "Sauvegarder" : "Save"}
-            </button>
-            <button className="popup-close" onClick={() => setEditUserRole(null)}>
-              {lang === "fr" ? "Fermer" : "Close"}
-            </button>
+            <button className="popup-save" onClick={updateUserRole}>{lang === "fr" ? "Sauvegarder" : "Save"}</button>
+            <button className="popup-close" onClick={() => setEditUserRole(null)}>{lang === "fr" ? "Fermer" : "Close"}</button>
           </div>
         </div>
       )}
@@ -360,16 +375,9 @@ function Dashboard() {
         <div className="dashboard-overlay" onClick={(e) => e.target === e.currentTarget && setDeleteUser(null)}>
           <div className="dashboard-popup dashboard-popup--delete">
             <h2>{lang === "fr" ? "Supprimer l'utilisateur ?" : "Delete user?"}</h2>
-            <p>
-              {lang === "fr" ? "Cette action est irréversible." : "This action is irreversible."}<br />
-              <strong>{deleteUser.pseudo}</strong>
-            </p>
-            <button className="popup-confirm-delete" onClick={confirmDeleteUser}>
-              {lang === "fr" ? "Oui supprimer" : "Yes, delete"}
-            </button>
-            <button className="popup-close" onClick={() => setDeleteUser(null)}>
-              {lang === "fr" ? "Annuler" : "Cancel"}
-            </button>
+            <p>{lang === "fr" ? "Cette action est irréversible." : "This action is irreversible."}<br /><strong>{deleteUser.pseudo}</strong></p>
+            <button className="popup-confirm-delete" onClick={confirmDeleteUser}>{lang === "fr" ? "Oui supprimer" : "Yes, delete"}</button>
+            <button className="popup-close" onClick={() => setDeleteUser(null)}>{lang === "fr" ? "Annuler" : "Cancel"}</button>
           </div>
         </div>
       )}

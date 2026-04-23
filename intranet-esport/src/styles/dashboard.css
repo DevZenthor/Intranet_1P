@@ -511,3 +511,103 @@
   color: #111;
   border-color: #FDB628;
 }
+
+.dashboard-membre-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dashboard-filter-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.dashboard-filter-btn:hover,
+.dashboard-filter-btn.active {
+  background: rgba(253,182,40,0.12);
+  border-color: rgba(253,182,40,0.4);
+  color: #FDB628;
+}
+
+.dashboard-membres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dashboard-membre-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.dashboard-membre-card:hover {
+  border-color: rgba(253,182,40,0.2);
+}
+
+.dashboard-membre-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1rem;
+  color: #111;
+  flex-shrink: 0;
+}
+
+.dashboard-membre-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.dashboard-membre-pseudo {
+  color: white;
+  font-weight: 800;
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-membre-role {
+  color: rgba(255,255,255,0.35);
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-membre-cat {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.cat-staff   { background: rgba(253,182,40,0.15);  color: #FDB628; }
+.cat-player  { background: rgba(100,180,255,0.12); color: #64b4ff; }
+.cat-content { background: rgba(180,120,255,0.12); color: #b478ff; }
