@@ -518,3 +518,40 @@
   .planning-popup { padding: 28px 20px; }
   .planning-cell  { min-height: 60px; }
 }
+
+.type-stream  { color: #64b4ff; }
+.type-youtube { color: #ff5050; }
+.type-tournoi { color: #FDB628; }
+
+.planning-legend-icon {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.planning-event-icon-wrap {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.planning-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  color: #111;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-weight: 900;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-left: 8px;
+}
+
+.planning-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(253,182,40,0.35);
+}

@@ -396,3 +396,10 @@
   .profil-popup  { padding: 28px 20px; }
   .profil-stats  { grid-template-columns: 1fr; }
 }
+
+.profil-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}

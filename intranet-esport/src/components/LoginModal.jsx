@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../services/supabase";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../styles/loginmodal.css";
 
 function LoginModal({ closeModal, onLoginSuccess }) {
@@ -8,6 +9,7 @@ function LoginModal({ closeModal, onLoginSuccess }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -50,24 +52,17 @@ function LoginModal({ closeModal, onLoginSuccess }) {
     }
 
     localStorage.setItem("user", JSON.stringify(data[0]));
-
     if (onLoginSuccess) onLoginSuccess();
   }
 
   return (
     <div
       className={`login-overlay ${visible ? "login-overlay--in" : ""}`}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) handleClose();
-      }}
+      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
     >
       <div className={`login-box ${visible ? "login-box--in" : ""}`}>
 
-        <button
-          className="modal-close"
-          onClick={handleClose}
-          aria-label="Fermer"
-        >
+        <button className="modal-close" onClick={handleClose} aria-label="Fermer">
           <span></span>
           <span></span>
         </button>
@@ -79,6 +74,8 @@ function LoginModal({ closeModal, onLoginSuccess }) {
         </div>
 
         <div className="login-fields">
+
+          {/* PSEUDO */}
           <div className="login-field">
             <label>Pseudo</label>
             <input
@@ -91,21 +88,31 @@ function LoginModal({ closeModal, onLoginSuccess }) {
             />
           </div>
 
+          {/* CODE */}
           <div className="login-field">
             <label>Code</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && login()}
-            />
+            <div className="login-password-wrap">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && login()}
+              />
+              <button
+                type="button"
+                className="login-eye-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
+
         </div>
 
-        {error && (
-          <p className="login-error">⚠ {error}</p>
-        )}
+        {error && <p className="login-error">⚠ {error}</p>}
 
         <button
           className="login-submit-btn"

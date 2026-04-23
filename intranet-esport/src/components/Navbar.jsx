@@ -35,16 +35,15 @@ function Navbar() {
   }
 
   const canSeeDashboard = user && ["admin", "CEO"].includes(user.role);
-  const canSeeMembers = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
-  const canSeeDocs = user && ["admin", "CEO", "Director"].includes(user.role);
-  const canSeeContent = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
-  const canSeeServices = user && ["admin", "CEO", "Director"].includes(user.role);
-  const canSeeFortnite = user && ["admin", "CEO", "Director", "Coach"].includes(user.role);
-  const canSeeScouting = user && ["admin", "CEO", "Director"].includes(user.role);
-  const canSeeAnnonces = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
-  const canSeeWebtv = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
-
-
+  const canSeeMembers   = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
+  const canSeeDocs      = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeContent   = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeServices  = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeFortnite  = user && ["admin", "CEO", "Director", "Coach"].includes(user.role);
+  const canSeeScouting  = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeAnnonces  = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
+  const canSeeWebtv     = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeGestion   = user && ["admin", "CEO", "Director"].includes(user.role);
 
   function closeAll() {
     setShowFortnite(false);
@@ -73,14 +72,33 @@ function Navbar() {
           <Link to="/" className="navbar-logo">One Prodige</Link>
 
           <nav className="navbar-menu">
+
             {navLink("/", t.nav_accueil)}
+
+            {/* GESTION — Dashboard + Documents */}
+            {canSeeGestion && (
+              <div className="fortnite-menu">
+                <button
+                  className={`fortnite-toggle ${["/dashboard", "/documents"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  onClick={() => { setShowGestion(!showGestion); setShowFortnite(false); setShowContent(false); setShowServices(false); setShowWebtv(false); setShowEquipe(false); }}
+                >
+                  {lang === "fr" ? "Gestion" : "Admin"} ▾
+                </button>
+                {showGestion && (
+                  <div className="fortnite-dropdown">
+                    {canSeeDashboard && <Link to="/dashboard" onClick={closeAll}>Dashboard</Link>}
+                    <Link to="/documents" onClick={closeAll}>{t.nav_documents}</Link>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* ÉQUIPE — Équipe + Annonces */}
             {canSeeMembers && (
               <div className="fortnite-menu">
                 <button
-                  className={`fortnite-toggle ${["/equipe", "/annonces"].includes(location.pathname) ? "active-toggle" : ""
-                    }`}
-                  onClick={() => { setShowEquipe(!showEquipe); setShowFortnite(false); setShowContent(false); setShowServices(false); setShowWebtv(false); }}
+                  className={`fortnite-toggle ${["/equipe", "/annonces"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  onClick={() => { setShowEquipe(!showEquipe); setShowFortnite(false); setShowContent(false); setShowServices(false); setShowWebtv(false); setShowGestion(false); }}
                 >
                   {lang === "fr" ? "Équipe" : "Team"} ▾
                 </button>
@@ -97,10 +115,8 @@ function Navbar() {
             {canSeeFortnite && (
               <div className="fortnite-menu">
                 <button
-                  className={`fortnite-toggle ${["/scouting", "/performances", "/joueurs"].includes(location.pathname)
-                    ? "active-toggle" : ""
-                    }`}
-                  onClick={() => { setShowFortnite(!showFortnite); setShowContent(false); setShowServices(false); setShowWebtv(false); }}
+                  className={`fortnite-toggle ${["/scouting", "/performances", "/joueurs"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  onClick={() => { setShowFortnite(!showFortnite); setShowContent(false); setShowServices(false); setShowWebtv(false); setShowGestion(false); setShowEquipe(false); }}
                 >
                   {t.nav_fortnite} ▾
                 </button>
@@ -108,7 +124,7 @@ function Navbar() {
                   <div className="fortnite-dropdown">
                     {canSeeScouting && <Link to="/scouting" onClick={closeAll}>{t.nav_scouting}</Link>}
                     <Link to="/performances" onClick={closeAll}>{t.nav_performances}</Link>
-                    <Link to="/joueurs" onClick={closeAll}>{t.nav_joueurs}</Link>
+                    <Link to="/joueurs"      onClick={closeAll}>{t.nav_joueurs}</Link>
                   </div>
                 )}
               </div>
@@ -118,17 +134,15 @@ function Navbar() {
             {canSeeContent && (
               <div className="fortnite-menu">
                 <button
-                  className={`fortnite-toggle ${["/creators", "/videos"].includes(location.pathname)
-                    ? "active-toggle" : ""
-                    }`}
-                  onClick={() => { setShowContent(!showContent); setShowFortnite(false); setShowServices(false); setShowWebtv(false); }}
+                  className={`fortnite-toggle ${["/creators", "/videos"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  onClick={() => { setShowContent(!showContent); setShowFortnite(false); setShowServices(false); setShowWebtv(false); setShowGestion(false); setShowEquipe(false); }}
                 >
                   {t.nav_content} ▾
                 </button>
                 {showContent && (
                   <div className="fortnite-dropdown">
                     <Link to="/creators" onClick={closeAll}>{t.nav_creators}</Link>
-                    <Link to="/videos" onClick={closeAll}>{t.nav_videos}</Link>
+                    <Link to="/videos"   onClick={closeAll}>{t.nav_videos}</Link>
                   </div>
                 )}
               </div>
@@ -138,10 +152,8 @@ function Navbar() {
             {canSeeWebtv && (
               <div className="fortnite-menu">
                 <button
-                  className={`fortnite-toggle ${["/planning"].includes(location.pathname)
-                    ? "active-toggle" : ""
-                    }`}
-                  onClick={() => { setShowWebtv(!showWebtv); setShowFortnite(false); setShowContent(false); setShowServices(false); }}
+                  className={`fortnite-toggle ${["/planning"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  onClick={() => { setShowWebtv(!showWebtv); setShowFortnite(false); setShowContent(false); setShowServices(false); setShowGestion(false); setShowEquipe(false); }}
                 >
                   WebTV ▾
                 </button>
@@ -159,10 +171,8 @@ function Navbar() {
             {canSeeServices && (
               <div className="fortnite-menu">
                 <button
-                  className={`fortnite-toggle ${["/compta"].includes(location.pathname)
-                    ? "active-toggle" : ""
-                    }`}
-                  onClick={() => { setShowServices(!showServices); setShowFortnite(false); setShowContent(false); setShowWebtv(false); }}
+                  className={`fortnite-toggle ${["/compta"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  onClick={() => { setShowServices(!showServices); setShowFortnite(false); setShowContent(false); setShowWebtv(false); setShowGestion(false); setShowEquipe(false); }}
                 >
                   {t.nav_services} ▾
                 </button>
@@ -174,24 +184,6 @@ function Navbar() {
               </div>
             )}
 
-            {/* GESTION — Dashboard + Documents */}
-            {canSeeDashboard && (
-              <div className="fortnite-menu">
-                <button
-                  className={`fortnite-toggle ${["/dashboard", "/documents"].includes(location.pathname) ? "active-toggle" : ""
-                    }`}
-                  onClick={() => { setShowGestion(!showGestion); setShowFortnite(false); setShowContent(false); setShowServices(false); setShowWebtv(false); }}
-                >
-                  {lang === "fr" ? "Gestion" : "Admin"} ▾
-                </button>
-                {showGestion && (
-                  <div className="fortnite-dropdown">
-                    <Link to="/dashboard" onClick={closeAll}>Dashboard</Link>
-                    {canSeeDocs && <Link to="/documents" onClick={closeAll}>{t.nav_documents}</Link>}
-                  </div>
-                )}
-              </div>
-            )}
           </nav>
 
           <div className="navbar-right">

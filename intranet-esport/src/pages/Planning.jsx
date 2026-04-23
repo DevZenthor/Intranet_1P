@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../services/supabase";
 import { useLang } from "../context/LanguageContext";
-import translations from "../context/translations";
+import { FaTwitch, FaYoutube, FaTrophy, FaPlus } from "react-icons/fa";
 import "../styles/planning.css";
 
-const TYPES = ["Stream", "Webtv", "Tournoi"];
+const TYPES = ["Stream", "Youtube", "Tournoi"];
 
 const TYPE_CONFIG = {
-  Stream:  { color: "type-stream",  icon: "🎥", bg: "rgba(100,180,255,0.15)", border: "rgba(100,180,255,0.4)" },
-  Webtv:   { color: "type-webtv",   icon: "📺", bg: "rgba(180,120,255,0.15)", border: "rgba(180,120,255,0.4)" },
-  Tournoi: { color: "type-tournoi", icon: "🏆", bg: "rgba(253,182,40,0.15)",  border: "rgba(253,182,40,0.4)"  },
+  Stream:  { icon: <FaTwitch />,  color: "type-stream",  bg: "rgba(100,180,255,0.15)", border: "rgba(100,180,255,0.4)", dot: "#64b4ff" },
+  Youtube: { icon: <FaYoutube />, color: "type-youtube", bg: "rgba(255,80,80,0.15)",   border: "rgba(255,80,80,0.4)",   dot: "#ff5050" },
+  Tournoi: { icon: <FaTrophy />,  color: "type-tournoi", bg: "rgba(253,182,40,0.15)",  border: "rgba(253,182,40,0.4)",  dot: "#FDB628" },
 };
 
 const MOIS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
@@ -47,7 +47,10 @@ function Planning() {
   function handleChange(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
 
   async function addEvent() {
-    if (!form.titre || !form.date || !form.type) { alert(lang === "fr" ? "Titre, date et type requis" : "Title, date and type required"); return; }
+    if (!form.titre || !form.date || !form.type) {
+      alert(lang === "fr" ? "Titre, date et type requis" : "Title, date and type required");
+      return;
+    }
     await supabase.from("planning").insert([form]);
     setShowAdd(false); setForm(emptyForm); loadEvents();
   }
@@ -64,13 +67,12 @@ function Planning() {
 
   function openEdit(e) { setForm({ ...e }); setEditEvent(e); }
 
-  // Calendrier
-  const MOIS = lang === "fr" ? MOIS_FR : MOIS_EN;
+  const MOIS  = lang === "fr" ? MOIS_FR  : MOIS_EN;
   const JOURS = lang === "fr" ? JOURS_FR : JOURS_EN;
 
   const firstDay = new Date(currentYear, currentMonth, 1);
   const lastDay  = new Date(currentYear, currentMonth + 1, 0);
-  const startDow = (firstDay.getDay() + 6) % 7; // Lundi = 0
+  const startDow = (firstDay.getDay() + 6) % 7;
   const totalDays = lastDay.getDate();
 
   const cells = [];
@@ -99,11 +101,11 @@ function Planning() {
   const selectedDateStr = selectedDay
     ? `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`
     : null;
+
   const selectedEvents = selectedDay ? getEventsForDay(selectedDay) : [];
 
-  const isToday = (day) => {
-    return day === now.getDate() && currentMonth === now.getMonth() && currentYear === now.getFullYear();
-  };
+  const isToday = (day) =>
+    day === now.getDate() && currentMonth === now.getMonth() && currentYear === now.getFullYear();
 
   return (
     <section className="planning-page">
@@ -113,24 +115,28 @@ function Planning() {
 
         <p className="planning-mini">ONE PRODIGE</p>
         <h1 className="planning-title">{lang === "fr" ? "Planning" : "Schedule"}</h1>
-        <p className="planning-sub">{lang === "fr" ? "Streams, WebTV et tournois" : "Streams, WebTV and tournaments"}</p>
+        <p className="planning-sub">{lang === "fr" ? "Streams, YouTube et tournois" : "Streams, YouTube and tournaments"}</p>
 
         {/* LEGENDE */}
         <div className="planning-legend">
-          {TYPES.map(type => (
-            <div key={type} className="planning-legend-item">
-              <span className={`planning-legend-dot type-dot-${type.toLowerCase()}`} />
-              <span>{TYPE_CONFIG[type].icon} {type}</span>
-            </div>
-          ))}
+          {TYPES.map(type => {
+            const cfg = TYPE_CONFIG[type];
+            return (
+              <div key={type} className="planning-legend-item">
+                <span className="planning-legend-dot" style={{ background: cfg.dot }} />
+                <span className={`planning-legend-icon ${cfg.color}`}>{cfg.icon}</span>
+                <span>{type}</span>
+              </div>
+            );
+          })}
           {canManage && (
             <button className="planning-add-btn" onClick={() => { setForm(emptyForm); setShowAdd(true); }}>
-              + {lang === "fr" ? "Ajouter" : "Add"}
+              <FaPlus /> {lang === "fr" ? "Ajouter" : "Add"}
             </button>
           )}
         </div>
 
-        {/* NAVIGATION MOIS */}
+        {/* NAV MOIS */}
         <div className="planning-nav">
           <button className="planning-nav-btn" onClick={prevMonth}>←</button>
           <h2 className="planning-month">{MOIS[currentMonth]} {currentYear}</h2>
@@ -142,12 +148,10 @@ function Planning() {
         ) : (
           <div className="planning-calendar-wrap">
 
-            {/* JOURS DE LA SEMAINE */}
             <div className="planning-weekdays">
               {JOURS.map(j => <div key={j} className="planning-weekday">{j}</div>)}
             </div>
 
-            {/* GRILLE */}
             <div className="planning-grid">
               {cells.map((day, i) => {
                 const dayEvents = getEventsForDay(day);
@@ -157,7 +161,12 @@ function Planning() {
                 return (
                   <div
                     key={i}
-                    className={`planning-cell ${!day ? "planning-cell--empty" : ""} ${today ? "planning-cell--today" : ""} ${isSelected ? "planning-cell--selected" : ""} ${day ? "planning-cell--clickable" : ""}`}
+                    className={`planning-cell
+                      ${!day ? "planning-cell--empty" : ""}
+                      ${today ? "planning-cell--today" : ""}
+                      ${isSelected ? "planning-cell--selected" : ""}
+                      ${day ? "planning-cell--clickable" : ""}
+                    `}
                     onClick={() => day && setSelectedDay(isSelected ? null : day)}
                   >
                     {day && (
@@ -165,9 +174,15 @@ function Planning() {
                         <span className="planning-day-num">{day}</span>
                         <div className="planning-dots">
                           {dayEvents.slice(0, 3).map((e, idx) => (
-                            <span key={idx} className={`planning-dot type-dot-${e.type?.toLowerCase()}`} />
+                            <span
+                              key={idx}
+                              className="planning-dot"
+                              style={{ background: TYPE_CONFIG[e.type]?.dot || "#FDB628" }}
+                            />
                           ))}
-                          {dayEvents.length > 3 && <span className="planning-dot-more">+{dayEvents.length - 3}</span>}
+                          {dayEvents.length > 3 && (
+                            <span className="planning-dot-more">+{dayEvents.length - 3}</span>
+                          )}
                         </div>
                       </>
                     )}
@@ -179,7 +194,7 @@ function Planning() {
           </div>
         )}
 
-        {/* DETAIL DU JOUR SELECTIONNE */}
+        {/* DETAIL DU JOUR */}
         {selectedDay && (
           <div className="planning-detail">
             <h3 className="planning-detail-title">
@@ -198,7 +213,7 @@ function Planning() {
                     <div key={e.id} className="planning-event-card" style={{ borderColor: cfg.border, background: cfg.bg }}>
                       <div className="planning-event-top">
                         <div className="planning-event-info">
-                          <span className="planning-event-icon">{cfg.icon}</span>
+                          <span className={`planning-event-icon-wrap ${cfg.color}`}>{cfg.icon}</span>
                           <span className={`planning-event-type ${cfg.color}`}>{e.type}</span>
                           {e.heure && <span className="planning-event-heure">🕐 {e.heure}</span>}
                         </div>
@@ -226,7 +241,7 @@ function Planning() {
                 className="planning-add-day-btn"
                 onClick={() => { setForm({ ...emptyForm, date: selectedDateStr }); setShowAdd(true); }}
               >
-                + {lang === "fr" ? "Ajouter un événement ce jour" : "Add event this day"}
+                <FaPlus /> {lang === "fr" ? "Ajouter un événement ce jour" : "Add event this day"}
               </button>
             )}
           </div>
@@ -285,22 +300,12 @@ function EventForm({ form, onChange, lang }) {
         onChange={onChange}
       />
       <select name="type" value={form.type || "Stream"} onChange={onChange} className="popup-select">
-        <option value="Stream">🎥 Stream</option>
-        <option value="Webtv">📺 Youtube</option>
-        <option value="Tournoi">🏆 Tournoi</option>
+        <option value="Stream">Stream</option>
+        <option value="Youtube">YouTube</option>
+        <option value="Tournoi">Tournoi</option>
       </select>
-      <input
-        name="date"
-        type="date"
-        value={form.date || ""}
-        onChange={onChange}
-      />
-      <input
-        name="heure"
-        type="time"
-        value={form.heure || ""}
-        onChange={onChange}
-      />
+      <input name="date" type="date" value={form.date || ""} onChange={onChange} />
+      <input name="heure" type="time" value={form.heure || ""} onChange={onChange} />
       <textarea
         name="description"
         placeholder={lang === "fr" ? "Description (optionnel)" : "Description (optional)"}
