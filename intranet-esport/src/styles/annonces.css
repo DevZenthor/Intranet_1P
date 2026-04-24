@@ -391,3 +391,39 @@
   .annonces-grid  { grid-template-columns: 1fr; }
   .annonces-popup { padding: 28px 20px; }
 }
+
+.annonces-stat-icon-react {
+  font-size: 1.4rem;
+  color: #FDB628;
+}
+
+.annonces-icon-recrue { color: #4dcc80; }
+.annonces-icon-leave  { color: #ff6b6b; }
+
+.annonce-type-icon {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.annonce-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.annonce-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.annonces-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

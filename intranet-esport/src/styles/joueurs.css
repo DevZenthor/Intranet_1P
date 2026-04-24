@@ -368,3 +368,70 @@
   background: #111;
   color: white;
 }
+
+.joueurs-contrat-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ff6b6b;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: opacity 0.2s;
+}
+
+.joueurs-contrat-link:hover { opacity: 0.7; }
+
+.contrat-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(253,182,40,0.3);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.contrat-upload-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contrat-pdf-icon {
+  color: #ff6b6b;
+  font-size: 1.1rem;
+}
+
+.contrat-label {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.contrat-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #FDB628;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+  width: fit-content;
+}
+
+.contrat-view-btn:hover { opacity: 0.7; }
+
+.contrat-file-input {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.contrat-file-name {
+  color: #4dcc80;
+  font-size: 0.8rem;
+  margin: 0;
+  font-weight: 700;
+}
