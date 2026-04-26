@@ -20,7 +20,10 @@ function Performances() {
   const user = JSON.parse(localStorage.getItem("user"));
   const canManage = user && ["admin", "CEO", "Director"].includes(user.role);
 
-  const emptyForm = { joueur: "", format: "", nom_cup: "", classement: "", pr_gagne: "", kills: "", top1: "", points: "", cash_prize: "", date: "" };
+  const emptyForm = {
+    joueur: "", format: "", nom_cup: "", classement: "",
+    pr_gagne: "", kills: "", top1: "", points: "", cash_prize: "", date: ""
+  };
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => { loadPerfs(); loadPlayers(); }, []);
@@ -40,7 +43,10 @@ function Performances() {
   }
 
   async function loadPlayers() {
-    const { data } = await supabase.from("players").select("nom").order("nom", { ascending: true });
+    const { data } = await supabase
+      .from("players")
+      .select("nom")
+      .order("nom", { ascending: true });
     setPlayers(data || []);
   }
 
@@ -48,12 +54,26 @@ function Performances() {
 
   async function addPerf() {
     if (!form.joueur || !form.nom_cup) { alert("Joueur et nom de cup requis"); return; }
-    await supabase.from("performances").insert([{ ...form, classement: parseInt(form.classement)||0, pr_gagne: parseInt(form.pr_gagne)||0, kills: parseInt(form.kills)||0, top1: parseInt(form.top1)||0, points: parseInt(form.points)||0 }]);
+    await supabase.from("performances").insert([{
+      ...form,
+      classement: parseInt(form.classement) || 0,
+      pr_gagne:   parseInt(form.pr_gagne)   || 0,
+      kills:      parseInt(form.kills)      || 0,
+      top1:       parseInt(form.top1)       || 0,
+      points:     parseInt(form.points)     || 0,
+    }]);
     setShowAdd(false); setForm(emptyForm); loadPerfs();
   }
 
   async function updatePerf() {
-    await supabase.from("performances").update({ ...form, classement: parseInt(form.classement)||0, pr_gagne: parseInt(form.pr_gagne)||0, kills: parseInt(form.kills)||0, top1: parseInt(form.top1)||0, points: parseInt(form.points)||0 }).eq("id", editPerf.id);
+    await supabase.from("performances").update({
+      ...form,
+      classement: parseInt(form.classement) || 0,
+      pr_gagne:   parseInt(form.pr_gagne)   || 0,
+      kills:      parseInt(form.kills)      || 0,
+      top1:       parseInt(form.top1)       || 0,
+      points:     parseInt(form.points)     || 0,
+    }).eq("id", editPerf.id);
     setEditPerf(null); setForm(emptyForm); loadPerfs();
   }
 
@@ -78,10 +98,14 @@ function Performances() {
     worstPoints: filtered.length ? Math.min(...filtered.map(p => p.points || 0)) : 0,
   };
 
-  const joueurs = [...new Set(perfs.map(p => p.joueur).filter(Boolean))];
+  // ✅ FIX — joueurs vient de players (pas des perfs) pour inclure les nouveaux
+  const joueurs = players.map(p => p.nom);
 
   const prParJoueur = {};
-  filtered.forEach(p => { if (!prParJoueur[p.joueur]) prParJoueur[p.joueur] = 0; prParJoueur[p.joueur] += (p.pr_gagne || 0); });
+  filtered.forEach(p => {
+    if (!prParJoueur[p.joueur]) prParJoueur[p.joueur] = 0;
+    prParJoueur[p.joueur] += (p.pr_gagne || 0);
+  });
   const chartData = Object.entries(prParJoueur).map(([joueur, pr]) => ({ joueur, pr }));
 
   return (
@@ -105,15 +129,41 @@ function Performances() {
             <option value="Trio">Trio</option>
             <option value="Squad">Squad</option>
           </select>
-          {canManage && <button className="perf-add-btn" onClick={() => { setForm(emptyForm); setShowAdd(true); }}>{t.perf_add}</button>}
+          {canManage && (
+            <button
+              className="perf-add-btn"
+              onClick={() => {
+                setForm(emptyForm);
+                loadPlayers(); // ✅ refresh joueurs avant d'ouvrir
+                setShowAdd(true);
+              }}
+            >
+              {t.perf_add}
+            </button>
+          )}
         </div>
 
         <div className="perf-stats-grid">
-          <div className="perf-stat-card"><span className="perf-stat-label">{t.perf_avg_kills}</span><span className="perf-stat-value">{stats.avgKills}</span></div>
-          <div className="perf-stat-card"><span className="perf-stat-label">{t.perf_avg_points}</span><span className="perf-stat-value">{stats.avgPoints}</span></div>
-          <div className="perf-stat-card"><span className="perf-stat-label">{t.perf_total_pr}</span><span className="perf-stat-value">{stats.totalPR.toLocaleString()}</span></div>
-          <div className="perf-stat-card perf-stat-card--best"><span className="perf-stat-label">{t.perf_best}</span><span className="perf-stat-value">{stats.bestPoints} pts</span></div>
-          <div className="perf-stat-card perf-stat-card--worst"><span className="perf-stat-label">{t.perf_worst}</span><span className="perf-stat-value">{stats.worstPoints} pts</span></div>
+          <div className="perf-stat-card">
+            <span className="perf-stat-label">{t.perf_avg_kills}</span>
+            <span className="perf-stat-value">{stats.avgKills}</span>
+          </div>
+          <div className="perf-stat-card">
+            <span className="perf-stat-label">{t.perf_avg_points}</span>
+            <span className="perf-stat-value">{stats.avgPoints}</span>
+          </div>
+          <div className="perf-stat-card">
+            <span className="perf-stat-label">{t.perf_total_pr}</span>
+            <span className="perf-stat-value">{stats.totalPR.toLocaleString()}</span>
+          </div>
+          <div className="perf-stat-card perf-stat-card--best">
+            <span className="perf-stat-label">{t.perf_best}</span>
+            <span className="perf-stat-value">{stats.bestPoints} pts</span>
+          </div>
+          <div className="perf-stat-card perf-stat-card--worst">
+            <span className="perf-stat-label">{t.perf_worst}</span>
+            <span className="perf-stat-value">{stats.worstPoints} pts</span>
+          </div>
         </div>
 
         {chartData.length > 0 && (
@@ -123,31 +173,52 @@ function Performances() {
               <BarChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                 <XAxis dataKey="joueur" stroke="#aaa" tick={{ fill: "#ccc", fontWeight: 700 }} />
                 <YAxis stroke="#aaa" tick={{ fill: "#ccc" }} />
-                <Tooltip contentStyle={{ background: "#111", border: "1px solid rgba(253,182,40,0.3)", borderRadius: 12 }} labelStyle={{ color: "#FDB628", fontWeight: 900 }} itemStyle={{ color: "white" }} />
+                <Tooltip
+                  contentStyle={{ background: "#111", border: "1px solid rgba(253,182,40,0.3)", borderRadius: 12 }}
+                  labelStyle={{ color: "#FDB628", fontWeight: 900 }}
+                  itemStyle={{ color: "white" }}
+                />
                 <Bar dataKey="pr" name={t.perf_pr} fill="#FDB628" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         )}
 
-        {loading ? <p className="perf-loading">{t.perf_loading}</p> : (
+        {loading ? (
+          <p className="perf-loading">{t.perf_loading}</p>
+        ) : (
           <div className="perf-table-wrap">
             <table className="perf-table">
               <thead>
                 <tr>
-                  <th>{t.perf_joueur}</th><th>{t.perf_format}</th><th>{t.perf_cup}</th>
-                  <th>{t.perf_date}</th><th>{t.perf_class}</th><th>{t.perf_pr}</th>
-                  <th>{t.perf_kills}</th><th>{t.perf_top1}</th><th>{t.perf_points}</th>
-                  <th>{t.perf_cash}</th>{canManage && <th>{t.perf_actions}</th>}
+                  <th>{t.perf_joueur}</th>
+                  <th>{t.perf_format}</th>
+                  <th>{t.perf_cup}</th>
+                  <th>{t.perf_date}</th>
+                  <th>{t.perf_class}</th>
+                  <th>{t.perf_pr}</th>
+                  <th>{t.perf_kills}</th>
+                  <th>{t.perf_top1}</th>
+                  <th>{t.perf_points}</th>
+                  <th>{t.perf_cash}</th>
+                  {canManage && <th>{t.perf_actions}</th>}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={canManage ? 11 : 10} className="perf-empty">{t.perf_empty}</td></tr>
+                  <tr>
+                    <td colSpan={canManage ? 11 : 10} className="perf-empty">
+                      {t.perf_empty}
+                    </td>
+                  </tr>
                 ) : filtered.map((p) => (
                   <tr key={p.id}>
                     <td className="perf-joueur">{p.joueur}</td>
-                    <td><span className={`perf-badge ${p.format === "Solo" ? "badge-solo" : "badge-duo"}`}>{p.format}</span></td>
+                    <td>
+                      <span className={`perf-badge ${p.format === "Solo" ? "badge-solo" : "badge-duo"}`}>
+                        {p.format}
+                      </span>
+                    </td>
                     <td className="perf-cup">{p.nom_cup}</td>
                     <td className="perf-date">{p.date || "—"}</td>
                     <td className="perf-rank">#{p.classement}</td>
@@ -170,6 +241,7 @@ function Performances() {
         )}
       </div>
 
+      {/* POPUP AJOUTER */}
       {showAdd && (
         <div className="perf-overlay" onClick={(e) => e.target === e.currentTarget && setShowAdd(false)}>
           <div className="perf-popup">
@@ -181,6 +253,7 @@ function Performances() {
         </div>
       )}
 
+      {/* POPUP MODIFIER */}
       {editPerf && (
         <div className="perf-overlay" onClick={(e) => e.target === e.currentTarget && setEditPerf(null)}>
           <div className="perf-popup">
@@ -192,6 +265,7 @@ function Performances() {
         </div>
       )}
 
+      {/* POPUP SUPPRIMER */}
       {deletePerf && (
         <div className="perf-overlay" onClick={(e) => e.target === e.currentTarget && setDeletePerf(null)}>
           <div className="perf-popup perf-popup--delete">
@@ -221,16 +295,23 @@ function PerfForm({ form, onChange, players, t }) {
         <option value="Squad">Squad</option>
       </select>
       {[
-        { name: "nom_cup",    placeholder: t.perf_cup,    type: "text"   },
+        { name: "nom_cup",    placeholder: t.perf_cup,                     type: "text"   },
         { name: "date",       placeholder: t.perf_date + " (ex: 16/3/2026)", type: "text" },
-        { name: "classement", placeholder: t.perf_class,  type: "number" },
-        { name: "pr_gagne",   placeholder: t.perf_pr,     type: "number" },
-        { name: "kills",      placeholder: t.perf_kills,  type: "number" },
-        { name: "top1",       placeholder: t.perf_top1 + " (1/0)", type: "number" },
-        { name: "points",     placeholder: t.perf_points, type: "number" },
-        { name: "cash_prize", placeholder: t.perf_cash,   type: "text"   },
+        { name: "classement", placeholder: t.perf_class,                   type: "number" },
+        { name: "pr_gagne",   placeholder: t.perf_pr,                      type: "number" },
+        { name: "kills",      placeholder: t.perf_kills,                   type: "number" },
+        { name: "top1",       placeholder: t.perf_top1 + " (1/0)",         type: "number" },
+        { name: "points",     placeholder: t.perf_points,                  type: "number" },
+        { name: "cash_prize", placeholder: t.perf_cash,                    type: "text"   },
       ].map(f => (
-        <input key={f.name} name={f.name} type={f.type} placeholder={f.placeholder} value={form[f.name] || ""} onChange={onChange} />
+        <input
+          key={f.name}
+          name={f.name}
+          type={f.type}
+          placeholder={f.placeholder}
+          value={form[f.name] || ""}
+          onChange={onChange}
+        />
       ))}
     </div>
   );
