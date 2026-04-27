@@ -1,0 +1,216 @@
+.stream-page {
+  min-height: 100vh;
+  padding: 140px 40px 80px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, rgba(253,182,40,0.18), transparent 20%),
+    radial-gradient(circle at bottom left, rgba(253,182,40,0.12), transparent 20%),
+    linear-gradient(135deg, #050505, #111111);
+}
+
+.stream-particles {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#FDB628 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.06;
+  animation: particlesMove 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particlesMove {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(80px); }
+}
+
+.stream-container {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: auto;
+}
+
+.stream-mini {
+  text-align: center;
+  color: #FDB628;
+  letter-spacing: 8px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.stream-title {
+  text-align: center;
+  font-size: 64px;
+  font-weight: 900;
+  color: white;
+  margin: 0 0 12px;
+  line-height: 1;
+}
+
+.stream-sub {
+  text-align: center;
+  color: #d9d9d9;
+  font-size: 1rem;
+  margin-bottom: 40px;
+}
+
+/* ADD */
+.stream-add-wrap {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.stream-input {
+  flex: 1;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 14px 18px;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.stream-input:focus {
+  border-color: rgba(253,182,40,0.5);
+}
+
+.stream-input::placeholder { color: rgba(255,255,255,0.25); }
+
+.stream-add-btn {
+  background: linear-gradient(135deg, #FDB628, #ffcf63);
+  color: #111;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-weight: 900;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.stream-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(253,182,40,0.35);
+}
+
+.stream-counter {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.78rem;
+  text-align: right;
+  margin-bottom: 32px;
+}
+
+/* LISTE */
+.stream-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stream-titre-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(253,182,40,0.12);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.stream-titre-card:hover {
+  border-color: rgba(253,182,40,0.3);
+  transform: translateY(-2px);
+}
+
+.stream-titre-text {
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.stream-titre-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stream-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(253,182,40,0.1);
+  border: 1px solid rgba(253,182,40,0.25);
+  color: #FDB628;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.stream-copy-btn:hover {
+  background: #FDB628;
+  color: #111;
+  border-color: #FDB628;
+}
+
+.stream-copy-btn.copied {
+  background: rgba(77,204,128,0.15);
+  border-color: rgba(77,204,128,0.4);
+  color: #4dcc80;
+}
+
+.stream-delete-btn {
+  background: rgba(255,64,64,0.1);
+  border: 1px solid rgba(255,64,64,0.2);
+  color: #ff6b6b;
+  border-radius: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  font-family: inherit;
+}
+
+.stream-delete-btn:hover {
+  background: #ff4040;
+  color: white;
+  border-color: #ff4040;
+}
+
+.stream-loading,
+.stream-empty {
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 1rem;
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .stream-title   { font-size: 42px; }
+  .stream-page    { padding: 120px 16px 60px; }
+  .stream-add-wrap { flex-direction: column; }
+  .stream-titre-card { flex-direction: column; align-items: flex-start; }
+}

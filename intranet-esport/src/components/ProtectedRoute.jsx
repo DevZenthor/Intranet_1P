@@ -15,6 +15,7 @@ const ROLE_ROUTES = {
   "/profil":       ["admin", "CEO", "Director", "Manager", "Coach"],
   "/dashboard":    ["admin", "CEO"],
   "/planning":     ["admin", "CEO", "Director", "Manager", "Coach"],
+  "/stream-titres": ["admin", "CEO", "Director"],
 };
 
 function ProtectedRoute({ children }) {

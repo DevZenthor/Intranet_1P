@@ -35,6 +35,20 @@ function Performances() {
     return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
   }
 
+  function formatDateForDB(dateStr) {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    return `${parseInt(parts[2])}/${parseInt(parts[1])}/${parts[0]}`;
+  }
+
+  function formatDateForInput(dateStr) {
+    if (!dateStr) return "";
+    const parts = dateStr.split("/");
+    if (parts.length !== 3) return "";
+    return `${parts[2]}-${String(parts[1]).padStart(2, "0")}-${String(parts[0]).padStart(2, "0")}`;
+  }
+
   async function loadPerfs() {
     const { data } = await supabase.from("performances").select("*");
     const sorted = (data || []).sort((a, b) => parseDate(b.date) - parseDate(a.date));
@@ -53,36 +67,86 @@ function Performances() {
   function handleChange(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
 
   async function addPerf() {
-    if (!form.joueur || !form.nom_cup) { alert("Joueur et nom de cup requis"); return; }
-    await supabase.from("performances").insert([{
-      ...form,
+    if (!form.joueur || !form.nom_cup) {
+      alert("Joueur et nom de cup requis");
+      return;
+    }
+
+    const payload = {
+      joueur:     form.joueur,
+      format:     form.format     || null,
+      nom_cup:    form.nom_cup,
+      date:       formatDateForDB(form.date) || null,
       classement: parseInt(form.classement) || 0,
       pr_gagne:   parseInt(form.pr_gagne)   || 0,
       kills:      parseInt(form.kills)      || 0,
       top1:       parseInt(form.top1)       || 0,
       points:     parseInt(form.points)     || 0,
-    }]);
-    setShowAdd(false); setForm(emptyForm); loadPerfs();
+      cash_prize: form.cash_prize           || null,
+    };
+
+    console.log("PAYLOAD:", payload);
+
+    const { data, error } = await supabase
+      .from("performances")
+      .insert([payload])
+      .select();
+
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
+
+    if (error) {
+      alert("Erreur : " + error.message);
+      return;
+    }
+
+    setShowAdd(false);
+    setForm(emptyForm);
+    loadPerfs();
   }
 
   async function updatePerf() {
-    await supabase.from("performances").update({
-      ...form,
+    const payload = {
+      joueur:     form.joueur,
+      format:     form.format     || null,
+      nom_cup:    form.nom_cup,
+      date:       formatDateForDB(form.date) || null,
       classement: parseInt(form.classement) || 0,
       pr_gagne:   parseInt(form.pr_gagne)   || 0,
       kills:      parseInt(form.kills)      || 0,
       top1:       parseInt(form.top1)       || 0,
       points:     parseInt(form.points)     || 0,
-    }).eq("id", editPerf.id);
-    setEditPerf(null); setForm(emptyForm); loadPerfs();
+      cash_prize: form.cash_prize           || null,
+    };
+
+    const { error } = await supabase
+      .from("performances")
+      .update(payload)
+      .eq("id", editPerf.id);
+
+    if (error) {
+      alert("Erreur : " + error.message);
+      return;
+    }
+
+    setEditPerf(null);
+    setForm(emptyForm);
+    loadPerfs();
   }
 
   async function confirmDelete() {
     await supabase.from("performances").delete().eq("id", deletePerf.id);
-    setDeletePerf(null); loadPerfs();
+    setDeletePerf(null);
+    loadPerfs();
   }
 
-  function openEdit(p) { setForm({ ...p }); setEditPerf(p); }
+  function openEdit(p) {
+    setForm({
+      ...p,
+      date: formatDateForInput(p.date),
+    });
+    setEditPerf(p);
+  }
 
   const filtered = perfs.filter(p => {
     const okJoueur = filterJoueur === "tous" || p.joueur === filterJoueur;
@@ -98,7 +162,6 @@ function Performances() {
     worstPoints: filtered.length ? Math.min(...filtered.map(p => p.points || 0)) : 0,
   };
 
-  // ✅ FIX — joueurs vient de players (pas des perfs) pour inclure les nouveaux
   const joueurs = players.map(p => p.nom);
 
   const prParJoueur = {};
@@ -132,11 +195,7 @@ function Performances() {
           {canManage && (
             <button
               className="perf-add-btn"
-              onClick={() => {
-                setForm(emptyForm);
-                loadPlayers(); // ✅ refresh joueurs avant d'ouvrir
-                setShowAdd(true);
-              }}
+              onClick={() => { setForm(emptyForm); loadPlayers(); setShowAdd(true); }}
             >
               {t.perf_add}
             </button>
@@ -226,7 +285,7 @@ function Performances() {
                     <td>{p.kills || 0}</td>
                     <td>{p.top1 ? "✓" : "—"}</td>
                     <td className="perf-points">{p.points || 0}</td>
-                    <td>{p.cash_prize || "$0.00"}</td>
+                    <td>{p.cash_prize || "—"}</td>
                     {canManage && (
                       <td className="perf-actions">
                         <button className="btn-edit" onClick={() => openEdit(p)}>{t.perf_modifier}</button>
@@ -287,6 +346,7 @@ function PerfForm({ form, onChange, players, t }) {
         <option value="">{t.perf_joueur}</option>
         {players.map(p => <option key={p.nom} value={p.nom}>{p.nom}</option>)}
       </select>
+
       <select name="format" value={form.format || ""} onChange={onChange} className="popup-select">
         <option value="">{t.perf_format}</option>
         <option value="Solo">Solo</option>
@@ -294,25 +354,15 @@ function PerfForm({ form, onChange, players, t }) {
         <option value="Trio">Trio</option>
         <option value="Squad">Squad</option>
       </select>
-      {[
-        { name: "nom_cup",    placeholder: t.perf_cup,                     type: "text"   },
-        { name: "date",       placeholder: t.perf_date + " (ex: 16/3/2026)", type: "text" },
-        { name: "classement", placeholder: t.perf_class,                   type: "number" },
-        { name: "pr_gagne",   placeholder: t.perf_pr,                      type: "number" },
-        { name: "kills",      placeholder: t.perf_kills,                   type: "number" },
-        { name: "top1",       placeholder: t.perf_top1 + " (1/0)",         type: "number" },
-        { name: "points",     placeholder: t.perf_points,                  type: "number" },
-        { name: "cash_prize", placeholder: t.perf_cash,                    type: "text"   },
-      ].map(f => (
-        <input
-          key={f.name}
-          name={f.name}
-          type={f.type}
-          placeholder={f.placeholder}
-          value={form[f.name] || ""}
-          onChange={onChange}
-        />
-      ))}
+
+      <input name="nom_cup"    type="text"   placeholder={t.perf_cup}              value={form.nom_cup    || ""} onChange={onChange} />
+      <input name="date"       type="date"                                           value={form.date       || ""} onChange={onChange} />
+      <input name="classement" type="number" placeholder={t.perf_class}  min="0"   value={form.classement || ""} onChange={onChange} />
+      <input name="pr_gagne"   type="number" placeholder={t.perf_pr}     min="0"   value={form.pr_gagne   || ""} onChange={onChange} />
+      <input name="kills"      type="number" placeholder={t.perf_kills}  min="0"   value={form.kills      || ""} onChange={onChange} />
+      <input name="top1"       type="number" placeholder={t.perf_top1 + " (1/0)"} min="0" max="1" value={form.top1 || ""} onChange={onChange} />
+      <input name="points"     type="number" placeholder={t.perf_points} min="0"   value={form.points     || ""} onChange={onChange} />
+      <input name="cash_prize" type="text"   placeholder={t.perf_cash}             value={form.cash_prize || ""} onChange={onChange} />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import Profil from "./pages/Profil";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Planning from "./pages/Planning";
+import StreamTitres from "./pages/StreamTitres";
 
 function App() {
   return (
@@ -81,6 +82,10 @@ function App() {
 
         <Route path="/planning" element={
           <ProtectedRoute><Planning /></ProtectedRoute>
+        } />
+
+        <Route path="/stream-titres" element={
+          <ProtectedRoute><StreamTitres /></ProtectedRoute>
         } />
 
         {/* 404 */}

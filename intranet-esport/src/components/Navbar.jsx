@@ -152,15 +152,18 @@ function Navbar() {
             {canSeeWebtv && (
               <div className="fortnite-menu">
                 <button
-                  className={`fortnite-toggle ${["/planning"].includes(location.pathname) ? "active-toggle" : ""}`}
+                  className={`fortnite-toggle ${["/planning", "/stream-titres"].includes(location.pathname) ? "active-toggle" : ""}`}
                   onClick={() => { setShowWebtv(!showWebtv); setShowFortnite(false); setShowContent(false); setShowServices(false); setShowGestion(false); setShowEquipe(false); }}
                 >
                   WebTV ▾
                 </button>
                 {showWebtv && (
                   <div className="fortnite-dropdown">
-                    <Link to="/planning" onClick={closeAll}>
+                    <Link to="/planning"      onClick={closeAll}>
                       {lang === "fr" ? "Planning" : "Schedule"}
+                    </Link>
+                    <Link to="/stream-titres" onClick={closeAll}>
+                      {lang === "fr" ? "Titres Stream" : "Stream Titles"}
                     </Link>
                   </div>
                 )}
