@@ -23,6 +23,7 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Planning from "./pages/Planning";
 import StreamTitres from "./pages/StreamTitres";
+import PlanningStream from "./pages/PlanningStream";
 
 function App() {
   return (
@@ -86,6 +87,10 @@ function App() {
 
         <Route path="/stream-titres" element={
           <ProtectedRoute><StreamTitres /></ProtectedRoute>
+        } />
+
+        <Route path="/planning-stream" element={
+          <ProtectedRoute><PlanningStream /></ProtectedRoute>
         } />
 
         {/* 404 */}

@@ -35,15 +35,15 @@ function Navbar() {
   }
 
   const canSeeDashboard = user && ["admin", "CEO"].includes(user.role);
-  const canSeeMembers   = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
-  const canSeeDocs      = user && ["admin", "CEO", "Director"].includes(user.role);
-  const canSeeContent   = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
-  const canSeeServices  = user && ["admin", "CEO", "Director"].includes(user.role);
-  const canSeeFortnite  = user && ["admin", "CEO", "Director", "Coach"].includes(user.role);
-  const canSeeScouting  = user && ["admin", "CEO", "Director"].includes(user.role);
-  const canSeeAnnonces  = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
-  const canSeeWebtv     = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
-  const canSeeGestion   = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeMembers = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
+  const canSeeDocs = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeContent = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeServices = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeFortnite = user && ["admin", "CEO", "Director", "Coach"].includes(user.role);
+  const canSeeScouting = user && ["admin", "CEO", "Director"].includes(user.role);
+  const canSeeAnnonces = user && ["admin", "CEO", "Director", "Manager", "Coach"].includes(user.role);
+  const canSeeWebtv = user && ["admin", "CEO", "Director", "Manager"].includes(user.role);
+  const canSeeGestion = user && ["admin", "CEO", "Director"].includes(user.role);
 
   function closeAll() {
     setShowFortnite(false);
@@ -124,7 +124,7 @@ function Navbar() {
                   <div className="fortnite-dropdown">
                     {canSeeScouting && <Link to="/scouting" onClick={closeAll}>{t.nav_scouting}</Link>}
                     <Link to="/performances" onClick={closeAll}>{t.nav_performances}</Link>
-                    <Link to="/joueurs"      onClick={closeAll}>{t.nav_joueurs}</Link>
+                    <Link to="/joueurs" onClick={closeAll}>{t.nav_joueurs}</Link>
                   </div>
                 )}
               </div>
@@ -142,7 +142,7 @@ function Navbar() {
                 {showContent && (
                   <div className="fortnite-dropdown">
                     <Link to="/creators" onClick={closeAll}>{t.nav_creators}</Link>
-                    <Link to="/videos"   onClick={closeAll}>{t.nav_videos}</Link>
+                    <Link to="/videos" onClick={closeAll}>{t.nav_videos}</Link>
                   </div>
                 )}
               </div>
@@ -159,12 +159,13 @@ function Navbar() {
                 </button>
                 {showWebtv && (
                   <div className="fortnite-dropdown">
-                    <Link to="/planning"      onClick={closeAll}>
+                    <Link to="/planning" onClick={closeAll}>
                       {lang === "fr" ? "Planning" : "Schedule"}
                     </Link>
                     <Link to="/stream-titres" onClick={closeAll}>
                       {lang === "fr" ? "Titres Stream" : "Stream Titles"}
                     </Link>
+                    <Link to="/planning-stream" onClick={closeAll}>{lang === "fr" ? "Planning Stream" : "Stream Schedule"}</Link>
                   </div>
                 )}
               </div>
