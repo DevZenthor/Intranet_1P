@@ -16,7 +16,6 @@ function NotifBell() {
 
   useEffect(() => {
     loadAnnonces();
-    // Ferme si clic dehors
     function handleClick(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     }

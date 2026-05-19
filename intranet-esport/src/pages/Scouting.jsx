@@ -4,6 +4,8 @@ import { useLang } from "../context/LanguageContext";
 import translations from "../context/translations";
 import "../styles/scouting.css";
 
+const CATEGORIES = ["Pro", "Académique", "CDF"];
+
 function Scouting() {
   const [players, setPlayers] = useState([]);
   const [openForm, setOpenForm] = useState(false);
@@ -14,13 +16,9 @@ function Scouting() {
   const t = translations[lang];
 
   const [form, setForm] = useState({
-    pseudo: "",
-    age: "",
-    nationality: "",
-    nombre_de_pr: "",
-    prix: "",
-    manager: "",
-    pov: "",
+    pseudo: "", age: "", nationality: "",
+    nombre_de_PR: "", prix: "", manager: "",
+    pov: "", categorie: ""
   });
 
   useEffect(() => { loadPlayers(); }, []);
@@ -36,25 +34,37 @@ function Scouting() {
 
   const openAdd = () => {
     setEditId(null);
-    setForm({ pseudo: "", age: "", nationality: "", nombre_de_pr: "", prix: "", manager: "", pov: "" });
+    setForm({ pseudo: "", age: "", nationality: "", nombre_de_PR: "", prix: "", manager: "", pov: "", categorie: "" });
     setOpenForm(true);
   };
 
   const openEdit = (player) => {
     setEditId(player.id);
-    setForm(player);
+    setForm({
+      pseudo:       player.pseudo       || "",
+      age:          player.age          || "",
+      nationality:  player.nationality  || "",
+      nombre_de_PR: player.nombre_de_PR || "",
+      prix:         player.prix         || "",
+      manager:      player.manager      || "",
+      pov:          player.pov          || "",
+      categorie:    player.categorie    || "",
+    });
     setOpenForm(true);
   };
 
   const savePlayer = async () => {
+    if (!form.pseudo) { alert("Pseudo requis"); return; }
+
     const payload = {
       pseudo:       form.pseudo,
-      age:          Number(form.age),
+      age:          Number(form.age)          || null,
       nationality:  form.nationality,
-      nombre_de_PR: Number(form.nombre_de_pr),
-      prix:         Number(form.prix),
+      nombre_de_PR: Number(form.nombre_de_PR) || 0,
+      prix:         Number(form.prix)         || 0,
       manager:      form.manager,
-      pov:          form.pov
+      pov:          form.pov,
+      categorie:    form.categorie,
     };
 
     let result;
@@ -64,24 +74,24 @@ function Scouting() {
       result = await supabase.from("scoutings").insert([payload]);
     }
 
-    if (result.error) {
-      alert(result.error.message);
-      return;
-    }
-
+    if (result.error) { alert(result.error.message); return; }
     setOpenForm(false);
     loadPlayers();
   };
 
-  const askDelete = (id) => {
-    setDeleteId(id);
-    setOpenDelete(true);
-  };
+  const askDelete = (id) => { setDeleteId(id); setOpenDelete(true); };
 
   const confirmDelete = async () => {
     await supabase.from("scoutings").delete().eq("id", deleteId);
     setOpenDelete(false);
     loadPlayers();
+  };
+
+  const catColor = (cat) => {
+    if (cat === "Pro")        return "badge-pro";
+    if (cat === "Académique") return "badge-acad";
+    if (cat === "CDF")        return "badge-cdf";
+    return "badge-default";
   };
 
   return (
@@ -103,12 +113,14 @@ function Scouting() {
             <thead>
               <tr>
                 <th>#</th>
-                <th>{lang === "fr" ? "Pseudo"      : "Username"}</th>
-                <th>{lang === "fr" ? "Age"          : "Age"}</th>
-                <th>{lang === "fr" ? "Nation"       : "Nation"}</th>
+                <th>{lang === "fr" ? "Pseudo"    : "Username"}</th>
+                <th>{lang === "fr" ? "Catégorie" : "Category"}</th>
+                <th>{lang === "fr" ? "Age"       : "Age"}</th>
+                <th>{lang === "fr" ? "Nation"    : "Nation"}</th>
                 <th>PR</th>
-                <th>{lang === "fr" ? "Prix"         : "Price"}</th>
-                <th>{lang === "fr" ? "Actions"      : "Actions"}</th>
+                <th>{lang === "fr" ? "Prix"      : "Price"}</th>
+                <th>Manager</th>
+                <th>{lang === "fr" ? "Actions"   : "Actions"}</th>
               </tr>
             </thead>
             <tbody>
@@ -116,10 +128,18 @@ function Scouting() {
                 <tr key={p.id}>
                   <td>{i + 1}</td>
                   <td className="pseudo">{p.pseudo}</td>
-                  <td>{p.age}</td>
-                  <td>{p.nationality}</td>
-                  <td className="gold">{p["nombre de PR"] || p.nombre_de_pr}</td>
-                  <td>{p.prix}$</td>
+                  <td>
+                    {p.categorie ? (
+                      <span className={`scouting-badge ${catColor(p.categorie)}`}>
+                        {p.categorie}
+                      </span>
+                    ) : "—"}
+                  </td>
+                  <td>{p.age || "—"}</td>
+                  <td>{p.nationality || "—"}</td>
+                  <td className="gold">{p.nombre_de_PR || 0}</td>
+                  <td>{p.prix || 0}$</td>
+                  <td>{p.manager || "—"}</td>
                   <td>
                     <div className="action-box">
                       <button className="edit-btn" onClick={() => openEdit(p)}>
@@ -145,19 +165,70 @@ function Scouting() {
 
             <h2>
               {editId
-                ? (lang === "fr" ? "Modifier joueur"  : "Edit player")
-                : (lang === "fr" ? "Ajouter joueur"   : "Add player")}
+                ? (lang === "fr" ? "Modifier joueur" : "Edit player")
+                : (lang === "fr" ? "Ajouter joueur"  : "Add player")}
             </h2>
 
-            <input name="pseudo"       placeholder={lang === "fr" ? "Pseudo"       : "Username"}    value={form.pseudo}       onChange={change} />
-            <input name="age"          placeholder={lang === "fr" ? "Age"           : "Age"}         value={form.age}          onChange={change} />
-            <input name="nationality"  placeholder={lang === "fr" ? "Nationalité"   : "Nationality"} value={form.nationality}  onChange={change} />
-            <input name="nombre_de_pr" placeholder="PR"                                              value={form.nombre_de_pr} onChange={change} />
-            <input name="prix"         placeholder={lang === "fr" ? "Prix"          : "Price"}       value={form.prix}         onChange={change} />
-            <input name="manager"      placeholder="Manager"                                         value={form.manager}      onChange={change} />
-            <input name="pov"          placeholder="POV"                                             value={form.pov}          onChange={change} />
+            <input
+              name="pseudo"
+              placeholder={lang === "fr" ? "Pseudo" : "Username"}
+              value={form.pseudo}
+              onChange={change}
+            />
+            <input
+              name="age"
+              type="number"
+              placeholder="Age"
+              value={form.age}
+              onChange={change}
+            />
+            <input
+              name="nationality"
+              placeholder={lang === "fr" ? "Nationalité" : "Nationality"}
+              value={form.nationality}
+              onChange={change}
+            />
 
-            <button className="save-btn"   onClick={savePlayer}>
+            <select
+              name="categorie"
+              value={form.categorie}
+              onChange={change}
+              className="scouting-select"
+            >
+              <option value="">{lang === "fr" ? "Catégorie..." : "Category..."}</option>
+              {CATEGORIES.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+            <input
+              name="nombre_de_PR"
+              type="number"
+              placeholder="PR"
+              value={form.nombre_de_PR}
+              onChange={change}
+            />
+            <input
+              name="prix"
+              type="number"
+              placeholder={lang === "fr" ? "Prix ($)" : "Price ($)"}
+              value={form.prix}
+              onChange={change}
+            />
+            <input
+              name="manager"
+              placeholder="Manager"
+              value={form.manager}
+              onChange={change}
+            />
+            <input
+              name="pov"
+              placeholder="POV (lien)"
+              value={form.pov}
+              onChange={change}
+            />
+
+            <button className="save-btn" onClick={savePlayer}>
               {lang === "fr" ? "Sauvegarder" : "Save"}
             </button>
             <button className="cancel-btn" onClick={() => setOpenForm(false)}>
@@ -172,17 +243,14 @@ function Scouting() {
       {openDelete && (
         <div className="popup-bg">
           <div className="delete-box">
-
             <h2>{lang === "fr" ? "Supprimer joueur ?" : "Delete player?"}</h2>
             <p>{lang === "fr" ? "Cette action est irréversible." : "This action is irreversible."}</p>
-
             <button className="delete-confirm" onClick={confirmDelete}>
               {lang === "fr" ? "Oui supprimer" : "Yes, delete"}
             </button>
             <button className="cancel-btn" onClick={() => setOpenDelete(false)}>
               {lang === "fr" ? "Annuler" : "Cancel"}
             </button>
-
           </div>
         </div>
       )}

@@ -76,6 +76,7 @@
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 0 20px rgba(253,182,40,0.2);
+  font-family: inherit;
 }
 
 .add-btn:hover {
@@ -140,6 +141,20 @@
   font-weight: 900 !important;
 }
 
+/* BADGES CATEGORIE */
+.scouting-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.badge-pro     { background: rgba(253,182,40,0.15);  color: #FDB628; border: 1px solid rgba(253,182,40,0.3); }
+.badge-acad    { background: rgba(180,120,255,0.12); color: #b478ff; border: 1px solid rgba(180,120,255,0.3); }
+.badge-cdf     { background: rgba(100,180,255,0.12); color: #64b4ff; border: 1px solid rgba(100,180,255,0.3); }
+.badge-default { background: rgba(255,255,255,0.06); color: #aaa;    border: 1px solid rgba(255,255,255,0.1); }
+
 /* ACTION BUTTONS IN TABLE */
 .action-box {
   display: flex;
@@ -157,6 +172,7 @@
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   white-space: nowrap;
+  font-family: inherit;
 }
 
 .edit-btn {
@@ -171,7 +187,7 @@
 
 .delete-btn {
   background: #ff4545;
-  color: white !important;
+  color: white;
 }
 
 .delete-btn:hover {
@@ -217,16 +233,22 @@
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-.popup-box h2,
-.delete-box h2 {
+.popup-box h2 {
   color: white;
   font-size: 1.6rem;
   font-weight: 900;
   margin: 0 0 4px;
 }
 
+.delete-box {
+  border-color: rgba(255,64,64,0.2);
+}
+
 .delete-box h2 {
   color: #ff6b6b;
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin: 0 0 4px;
 }
 
 .delete-box p {
@@ -235,7 +257,8 @@
   margin: 0;
 }
 
-.popup-box input {
+.popup-box input,
+.scouting-select {
   width: 100%;
   padding: 13px 16px;
   border: 1px solid rgba(255,255,255,0.08);
@@ -253,9 +276,19 @@
   color: rgba(255,255,255,0.25);
 }
 
-.popup-box input:focus {
+.popup-box input:focus,
+.scouting-select:focus {
   border-color: rgba(253,182,40,0.5);
   background: rgba(253,182,40,0.04);
+}
+
+.scouting-select {
+  cursor: pointer;
+}
+
+.scouting-select option {
+  background: #111;
+  color: white;
 }
 
 .save-btn,
@@ -303,8 +336,8 @@
 }
 
 @media (max-width: 768px) {
-  .scouting-title    { font-size: 48px; }
-  .scouting-page     { padding: 120px 16px 60px; }
+  .scouting-title { font-size: 48px; }
+  .scouting-page  { padding: 120px 16px 60px; }
   .popup-box,
-  .delete-box        { padding: 28px 20px; }
+  .delete-box     { padding: 28px 20px; }
 }
