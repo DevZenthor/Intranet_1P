@@ -124,6 +124,7 @@ function Scouting() {
                 <th>{lang === "fr" ? "Age"       : "Age"}</th>
                 <th>{lang === "fr" ? "Nation"    : "Nation"}</th>
                 <th>PR</th>
+                <th>{lang === "fr" ? "Lien PR"   : "PR Link"}</th>
                 <th>POV</th>
                 <th>{lang === "fr" ? "Prix"      : "Price"}</th>
                 <th>Manager</th>
@@ -150,6 +151,17 @@ function Scouting() {
                       <a href={p.pr_url} target="_blank" rel="noreferrer" className="scouting-pr-link">
                         {lang === "fr" ? "Voir PR" : "View PR"}
                       </a>
+                    ) : "—"}
+                  </td>
+                  <td>
+                    {p.pov === "oui" ? (
+                      <span className="scouting-badge badge-pro">
+                        {lang === "fr" ? "Oui" : "Yes"}
+                      </span>
+                    ) : p.pov === "non" ? (
+                      <span className="scouting-badge badge-cdf">
+                        {lang === "fr" ? "Non" : "No"}
+                      </span>
                     ) : "—"}
                   </td>
                   <td>{p.prix || 0}$</td>
@@ -222,6 +234,7 @@ function Scouting() {
               value={form.nombre_de_PR}
               onChange={change}
             />
+
             <input
               name="pr_url"
               type="text"
@@ -229,6 +242,18 @@ function Scouting() {
               value={form.pr_url}
               onChange={change}
             />
+
+            <select
+              name="pov"
+              value={form.pov}
+              onChange={change}
+              className="scouting-select"
+            >
+              <option value="">{lang === "fr" ? "POV disponible ?" : "POV available?"}</option>
+              <option value="oui">{lang === "fr" ? "Oui" : "Yes"}</option>
+              <option value="non">{lang === "fr" ? "Non" : "No"}</option>
+            </select>
+
             <input
               name="prix"
               type="number"
@@ -236,16 +261,11 @@ function Scouting() {
               value={form.prix}
               onChange={change}
             />
+
             <input
               name="manager"
               placeholder="Manager"
               value={form.manager}
-              onChange={change}
-            />
-            <input
-              name="pov"
-              placeholder="POV (lien Twitter/X)"
-              value={form.pov}
               onChange={change}
             />
 
