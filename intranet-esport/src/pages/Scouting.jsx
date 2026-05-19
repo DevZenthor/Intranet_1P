@@ -18,7 +18,7 @@ function Scouting() {
   const [form, setForm] = useState({
     pseudo: "", age: "", nationality: "",
     nombre_de_PR: "", prix: "", manager: "",
-    pov: "", categorie: ""
+    pov: "", categorie: "", pr_url: ""
   });
 
   useEffect(() => { loadPlayers(); }, []);
@@ -34,7 +34,11 @@ function Scouting() {
 
   const openAdd = () => {
     setEditId(null);
-    setForm({ pseudo: "", age: "", nationality: "", nombre_de_PR: "", prix: "", manager: "", pov: "", categorie: "" });
+    setForm({
+      pseudo: "", age: "", nationality: "",
+      nombre_de_PR: "", prix: "", manager: "",
+      pov: "", categorie: "", pr_url: ""
+    });
     setOpenForm(true);
   };
 
@@ -49,6 +53,7 @@ function Scouting() {
       manager:      player.manager      || "",
       pov:          player.pov          || "",
       categorie:    player.categorie    || "",
+      pr_url:       player.pr_url       || "",
     });
     setOpenForm(true);
   };
@@ -65,6 +70,7 @@ function Scouting() {
       manager:      form.manager,
       pov:          form.pov,
       categorie:    form.categorie,
+      pr_url:       form.pr_url,
     };
 
     let result;
@@ -118,6 +124,7 @@ function Scouting() {
                 <th>{lang === "fr" ? "Age"       : "Age"}</th>
                 <th>{lang === "fr" ? "Nation"    : "Nation"}</th>
                 <th>PR</th>
+                <th>POV</th>
                 <th>{lang === "fr" ? "Prix"      : "Price"}</th>
                 <th>Manager</th>
                 <th>{lang === "fr" ? "Actions"   : "Actions"}</th>
@@ -138,6 +145,13 @@ function Scouting() {
                   <td>{p.age || "—"}</td>
                   <td>{p.nationality || "—"}</td>
                   <td className="gold">{p.nombre_de_PR || 0}</td>
+                  <td>
+                    {p.pr_url ? (
+                      <a href={p.pr_url} target="_blank" rel="noreferrer" className="scouting-pr-link">
+                        {lang === "fr" ? "Voir PR" : "View PR"}
+                      </a>
+                    ) : "—"}
+                  </td>
                   <td>{p.prix || 0}$</td>
                   <td>{p.manager || "—"}</td>
                   <td>
@@ -209,6 +223,13 @@ function Scouting() {
               onChange={change}
             />
             <input
+              name="pr_url"
+              type="text"
+              placeholder={lang === "fr" ? "Lien PR (URL)" : "PR Link (URL)"}
+              value={form.pr_url}
+              onChange={change}
+            />
+            <input
               name="prix"
               type="number"
               placeholder={lang === "fr" ? "Prix ($)" : "Price ($)"}
@@ -223,7 +244,7 @@ function Scouting() {
             />
             <input
               name="pov"
-              placeholder="POV (lien)"
+              placeholder="POV (lien Twitter/X)"
               value={form.pov}
               onChange={change}
             />
