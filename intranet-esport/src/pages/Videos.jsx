@@ -24,11 +24,19 @@ function Videos() {
 
   useEffect(() => { loadVideos(); loadCreators(); }, []);
 
-  async function loadVideos() {
-    const { data } = await supabase.from("videos").select("*").order("date", { ascending: false });
-    setVideos(data || []);
-    setLoading(false);
-  }
+async function loadVideos() {
+  const { data } = await supabase.from("videos").select("*");
+
+  const sorted = (data || []).sort((a, b) => {
+    const [da, ma, ya] = (a.date || "").split("/");
+    const [db, mb, yb] = (b.date || "").split("/");
+
+    return new Date(yb, mb - 1, db) - new Date(ya, ma - 1, da);
+  });
+
+  setVideos(sorted);
+  setLoading(false);
+}
 
   async function loadCreators() {
     const { data } = await supabase.from("creators").select("pseudo").order("pseudo", { ascending: true });
