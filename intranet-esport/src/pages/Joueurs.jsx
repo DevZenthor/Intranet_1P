@@ -21,7 +21,7 @@ function Joueurs() {
   const emptyForm = {
     nom: "", age: "", nationalite: "", categorie: "",
     pr_url: "", twitch: "", youtube: "",
-    twitter: "", contrat_url: ""
+    twitter: "", contrat_url: "", fin_contrat: ""
   };
   const [form, setForm] = useState(emptyForm);
 
@@ -97,6 +97,7 @@ function Joueurs() {
       youtube:     player.youtube     || "",
       twitter:     player.twitter     || "",
       contrat_url: player.contrat_url || "",
+      fin_contrat: player.fin_contrat || "",
     });
     setContratFile(null);
     setEditPlayer(player);
@@ -141,6 +142,7 @@ function Joueurs() {
                   <th>{t.joueurs_nation}</th>
                   <th>{t.joueurs_pr}</th>
                   <th>Contrat</th>
+                  <th>Fin de contrat</th>
                   {canManage && <th>{t.joueurs_actions}</th>}
                 </tr>
               </thead>
@@ -170,6 +172,7 @@ function Joueurs() {
                         </a>
                       ) : "—"}
                     </td>
+                    <td>{p.fin_contrat || "—"}</td>
                     {canManage && (
                       <td className="joueurs-actions">
                         <button className="btn-edit" onClick={() => openEdit(p)}>{t.joueurs_modifier}</button>
@@ -241,6 +244,19 @@ function PlayerForm({ form, onChange, t, lang, contratFile, setContratFile }) {
       <input name="twitch"  type="text" placeholder="Twitch URL"            value={form.twitch  || ""} onChange={onChange} />
       <input name="youtube" type="text" placeholder="YouTube URL"           value={form.youtube || ""} onChange={onChange} />
       <input name="twitter" type="text" placeholder="Twitter URL"           value={form.twitter || ""} onChange={onChange} />
+
+      {/* DATE FIN DE CONTRAT */}
+      <div className="contrat-date-field">
+        <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "4px" }}>
+          {lang === "fr" ? "Date de fin de contrat :" : "Contract end date:"}
+        </label>
+        <input
+          name="fin_contrat"
+          type="date"
+          value={form.fin_contrat || ""}
+          onChange={onChange}
+        />
+      </div>
 
       {/* CONTRAT PDF */}
       <div className="contrat-upload">
